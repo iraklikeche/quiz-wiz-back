@@ -2,25 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RegisterUserRequest;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
 
 class RegisterController extends Controller
 {
-    public function register(Request $request)
+    public function register(RegisterUserRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'username' => 'required|string|unique:users|min:3',
-            'email' => 'required|string|email|unique:users|max:255',
-            'password' => 'required|string|min:3|confirmed',
-            'agreed_to_terms' => 'required|boolean|accepted',
-        ]);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
 
         $user = User::create([
             'username' => $request->username,
@@ -31,6 +21,7 @@ class RegisterController extends Controller
 
         $token = $user->createToken('appToken')->plainTextToken;
 
+        // For Email verification, I will comment it till I implement that feat
         // $user->sendEmailVerificationNotification();
 
 

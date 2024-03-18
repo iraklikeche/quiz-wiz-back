@@ -11,6 +11,8 @@ Route::get('/user', function (Request $request) {
 
 Route::post('/register', [RegisterController::class, 'register']);
 
+// For Email verification, I will comment it till I implement that feat
+
 // Route::get('/email/verify', function (Request $request) {
 //     $frontendUrl = env('FRONTEND_URL', 'http://localhost');
 //     return $request->user()->hasVerifiedEmail()
