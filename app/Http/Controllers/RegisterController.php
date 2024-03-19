@@ -21,6 +21,8 @@ class RegisterController extends Controller
 
         $token = $user->createToken('appToken')->plainTextToken;
 
+        $user->sendEmailVerificationNotification();
+
 
 
         return response()->json(['message' => 'User successfully registered.']);
