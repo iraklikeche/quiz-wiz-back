@@ -34,7 +34,19 @@ class SessionController extends Controller
             ], 401);
         }
 
-        return $user->createToken('yourAppNameToken')->plainTextToken;
+        $token = $user->createToken('yourAppNameToken')->plainTextToken;
+
+        return response()->json([
+            'message' => 'User successfully logged in.',
+            'token' => $token,
+        ]);
+
+    }
+
+    public function logout(Request $request)
+    {
+        $request->user()->currentAccessToken()->delete();
+        return response()->json(['message' => 'You have been successfully logged out!']);
     }
 
     public function forgotPassword(Request $request)
