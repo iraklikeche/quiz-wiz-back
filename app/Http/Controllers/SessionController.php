@@ -13,16 +13,20 @@ class SessionController extends Controller
 {
     public function register(RegisterUserRequest $request)
     {
-        $user = User::create([
-            'username' => $request->username,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'agreed_to_terms' => $request->agreed_to_terms,
+     
+         $credentials = $request->only('email', 'password');
+
+    if (Auth::attempt($credentials)) {
+        $request->session()->regenerate();
+
+        return response()->json([
+            'message' => 'User successfully logged in.',
         ]);
+    }
 
-        $user->sendEmailVerificationNotification();
-
-        return response()->json(['message' => 'User successfully registered.']);
+    return response()->json([
+        'message' => 'The provided credentials are incorrect.'
+    ], 401);
     }
 
     public function login(LoginUserRequest $request)
