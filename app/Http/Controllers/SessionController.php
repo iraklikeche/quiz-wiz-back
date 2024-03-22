@@ -28,25 +28,6 @@ class SessionController extends Controller
     public function login(LoginUserRequest $request)
     {
 
-        $user = User::where('email', $request->email)->first();
-
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            return response()->json([
-                'message' => 'The provided credentials are incorrect.'
-            ], 401);
-        }
-
-        Auth::login($user);
-        $request->session()->regenerate();
-
-        $isLoggedIn = Auth::check();
-
-        return response()->json([
-            'message' => 'User successfully logged in.',
-            'isLoggedIn' => $isLoggedIn
-        ]);
-
-
         // $user = User::where('email', $request->email)->first();
 
         // if (!$user || !Hash::check($request->password, $user->password)) {
@@ -54,12 +35,31 @@ class SessionController extends Controller
         //         'message' => 'The provided credentials are incorrect.'
         //     ], 401);
         // }
+
         // Auth::login($user);
+        // // $request->session()->regenerate();
+
+        // $isLoggedIn = Auth::check();
 
         // return response()->json([
         //     'message' => 'User successfully logged in.',
-
+        //     'isLoggedIn' => $isLoggedIn
         // ]);
+
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return response()->json([
+                'message' => 'The provided credentials are incorrect.'
+            ], 401);
+        }
+        Auth::login($user);
+
+        return response()->json([
+            'message' => 'User successfully logged in.',
+
+        ]);
 
     }
 
