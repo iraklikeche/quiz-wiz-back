@@ -6,6 +6,7 @@ use App\Http\Requests\LoginUserRequest;
 use App\Http\Requests\RegisterUserRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class SessionController extends Controller
@@ -26,6 +27,7 @@ class SessionController extends Controller
 
     public function login(LoginUserRequest $request)
     {
+
         $user = User::where('email', $request->email)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
@@ -34,18 +36,36 @@ class SessionController extends Controller
             ], 401);
         }
 
-        $token = $user->createToken('yourAppNameToken')->plainTextToken;
+        Auth::login($user);
+        $request->session()->regenerate();
+
+        $isLoggedIn = Auth::check();
 
         return response()->json([
             'message' => 'User successfully logged in.',
-            'token' => $token,
+            'isLoggedIn' => $isLoggedIn
         ]);
+
+
+        // $user = User::where('email', $request->email)->first();
+
+        // if (!$user || !Hash::check($request->password, $user->password)) {
+        //     return response()->json([
+        //         'message' => 'The provided credentials are incorrect.'
+        //     ], 401);
+        // }
+        // Auth::login($user);
+
+        // return response()->json([
+        //     'message' => 'User successfully logged in.',
+
+        // ]);
 
     }
 
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        auth()->logout();
         return response()->json(['message' => 'You have been successfully logged out!']);
     }
 
