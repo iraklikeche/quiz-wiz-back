@@ -13,39 +13,37 @@ class SessionController extends Controller
 {
     public function register(RegisterUserRequest $request)
     {
-     
-         $credentials = $request->only('email', 'password');
 
-    if (Auth::attempt($credentials)) {
-        $request->session()->regenerate();
-
-        return response()->json([
-            'message' => 'User successfully logged in.',
+        $user = User::create([
+            'username' => $request->username,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'agreed_to_terms' => $request->agreed_to_terms,
         ]);
-    }
 
-    return response()->json([
-        'message' => 'The provided credentials are incorrect.'
-    ], 401);
+        $user->sendEmailVerificationNotification();
+
+        return response()->json(['message' => 'User successfully registered.']);
+
     }
 
     public function login(LoginUserRequest $request)
     {
 
-        $user = User::where('email', $request->email)->first();
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
+        $credentials = $request->only('email', 'password');
+
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+
             return response()->json([
-                'message' => 'The provided credentials are incorrect.'
-            ], 401);
+                'message' => 'User successfully logged in.',
+            ]);
         }
 
-        Auth::login($user);
-        $request->session()->regenerate();
-
         return response()->json([
-            'message' => 'User successfully logged in.',
-        ]);
+            'message' => 'The provided credentials are incorrect.'
+        ], 401);
 
     }
 
