@@ -17,6 +17,7 @@ class RegisterUserRequest extends FormRequest
             'username' => 'required|string|unique:users|min:3',
             'email' => 'required|string|email|unique:users|max:255',
             'password' => 'required|string|min:3|confirmed',
+            'password_confirmation' => 'same:password',
             'agreed_to_terms' => 'required|boolean|accepted',
         ];
     }

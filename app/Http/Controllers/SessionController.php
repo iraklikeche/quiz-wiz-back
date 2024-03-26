@@ -14,12 +14,7 @@ class SessionController extends Controller
     public function register(RegisterUserRequest $request)
     {
 
-        $user = User::create([
-            'username' => $request->username,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'agreed_to_terms' => $request->agreed_to_terms,
-        ]);
+        $user = User::create($request->validated());
 
         $user->sendEmailVerificationNotification();
 
