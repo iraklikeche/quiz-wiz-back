@@ -19,7 +19,6 @@ class SessionController extends Controller
         $user->sendEmailVerificationNotification();
 
         return response()->json(['message' => 'User successfully registered.']);
-
     }
 
     public function login(LoginUserRequest $request)
