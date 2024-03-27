@@ -18,19 +18,38 @@ class VerificationController extends Controller
         }
 
         if (!URL::hasValidSignature($request)) {
-            return response()->json(['message' => 'The verification link has expired.'], 401);
+            return redirect(config('app.frontend_url') . '/login?verified=expired');
         }
 
         if ($user->hasVerifiedEmail()) {
-            // return response()->json(['message' => 'Email is already verified.']);
             return redirect(config('app.frontend_url') . '/login?verified=already');
 
         } else {
             $user->markEmailAsVerified();
-            // return response()->json(['message' => 'Email verified successfully.']);
             return redirect(config('app.frontend_url') . '/login?verified=true');
 
         }
     }
+
+
+    public function resend(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return response()->json(['message' => 'No user could be found with this email address.'], 404);
+        }
+
+        if ($user->hasVerifiedEmail()) {
+            return response()->json(['message' => 'Email is already verified.']);
+        }
+
+        $user->sendEmailVerificationNotification();
+
+        return response()->json(['message' => 'Verification link sent.']);
+    }
+
 
 }
