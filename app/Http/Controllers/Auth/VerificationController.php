@@ -18,15 +18,16 @@ class VerificationController extends Controller
         }
 
         if (!URL::hasValidSignature($request)) {
-            return redirect(config('app.frontend_url') . '/login?verified=expired');
+            return response()->json(['message' => 'expired.']);
+
         }
 
         if ($user->hasVerifiedEmail()) {
-            return redirect(config('app.frontend_url') . '/login?verified=already');
+            return response()->json(['message' => 'already.'], );
 
         } else {
             $user->markEmailAsVerified();
-            return redirect(config('app.frontend_url') . '/login?verified=true');
+            return response()->json(['message' => 'verified.'], );
 
         }
     }

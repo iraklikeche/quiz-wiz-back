@@ -61,7 +61,15 @@ class CustomVerifyEmail extends Notification
         $frontendUrl = 'http://127.0.0.1:5173/login';
         $queryString = parse_url($tempUrl, PHP_URL_QUERY);
 
-        return $frontendUrl . '?' . $tempUrl;
+        $path = parse_url($tempUrl, PHP_URL_PATH);
+        $pathComponents = explode('/', trim($path, '/'));
+
+        $idIndex = array_search('verify', $pathComponents) + 1;
+        $id = $pathComponents[$idIndex] ?? null;
+        $hash = $pathComponents[$idIndex + 1] ?? null;
+
+        return $frontendUrl . "?id={$id}&hash={$hash}&{$queryString}";
+
     }
 
 
@@ -79,3 +87,8 @@ class CustomVerifyEmail extends Notification
         ];
     }
 }
+
+
+// http://127.0.0.1:5173/login?id=110&hash=b0354b4c4d17bb6fafc1f4a7fc3eacfe411de96b&expires=1711645656&signature=9569080d87193cb6f27a48606b915471922cbc83d6b489dc5e18082a3dd00d19
+
+// http://127.0.0.1:5173/login?http://127.0.0.1:8000/api/email/verify/110/b0354b4c4d17bb6fafc1f4a7fc3eacfe411de96b?expires=1711645656&signature=9569080d87193cb6f27a48606b915471922cbc83d6b489dc5e18082a3dd00d19
