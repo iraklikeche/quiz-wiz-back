@@ -19,8 +19,7 @@ Route::controller(SessionController::class)->group(function () {
 });
 
 Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'])
-    ->name('verification.verify')->middleware('signed');
-
+->name('verification.verify')->middleware('signed');
 
 Route::post('/email/resend', [VerificationController::class, 'resend'])
  ->name('verification.resend');

@@ -15,10 +15,10 @@ class User extends Authenticatable implements MustVerifyEmail
     use Notifiable;
     use HasApiTokens;
 
-    // public function sendEmailVerificationNotification()
-    // {
-    //     $this->notify(new CustomVerifyEmail());
-    // }
+    public function sendEmailVerificationNotification()
+    {
+        $this->notify(new CustomVerifyEmail());
+    }
 
 
     /**

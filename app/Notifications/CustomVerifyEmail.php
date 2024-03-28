@@ -7,6 +7,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
 
 class CustomVerifyEmail extends Notification
@@ -39,9 +40,6 @@ class CustomVerifyEmail extends Notification
         $verificationUrl = $this->verificationUrl($notifiable);
 
         return (new MailMessage())
-                    // ->line('The introduction to the notification.')
-                    // ->action('Notification Action', url('/'))
-                    // ->line('Thank you for using our application!');
                     ->subject('Please verify your email')
                     ->greeting('Hello ' . $notifiable->name)
                     ->line('You’re almost there! To complete your sign up, please verify your email address.')
@@ -49,18 +47,25 @@ class CustomVerifyEmail extends Notification
                     ->line('If you did not create an account, no further action is required.');
     }
 
+
     protected function verificationUrl($notifiable)
     {
-        return URL::temporarySignedRoute(
+        $expires = config('auth.verification.expire', 60);
+
+        $tempUrl = URL::temporarySignedRoute(
             'verification.verify',
-            Carbon::now()->addMinutes(60),
-            [
-                'id' => $notifiable->getKey(),
-                'hash' => sha1($notifiable->getEmailForVerification()),
-            ]
+            Carbon::now()->addMinutes($expires),
+            ['id' => $notifiable->getKey(), 'hash' => sha1($notifiable->getEmailForVerification())]
         );
+
+        $frontendUrl = 'http://127.0.0.1:5173/login';
+        $queryString = parse_url($tempUrl, PHP_URL_QUERY);
+
+        return $frontendUrl . '?' . $tempUrl;
     }
-    
+
+
+
 
     /**
      * Get the array representation of the notification.
