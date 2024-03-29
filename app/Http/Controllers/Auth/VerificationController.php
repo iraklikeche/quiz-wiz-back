@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ResendVerificationRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
@@ -18,25 +19,21 @@ class VerificationController extends Controller
         }
 
         if (!URL::hasValidSignature($request)) {
-            return response()->json(['message' => 'expired.']);
-
+            return response()->json(['error' => 'link_expired', 'message' => 'Verification link is expired.']);
         }
 
         if ($user->hasVerifiedEmail()) {
-            return response()->json(['message' => 'already.'], );
+            return response()->json(['error' => 'already_verified', 'message' => 'User is already verified.'], );
 
         } else {
             $user->markEmailAsVerified();
-            return response()->json(['message' => 'verified.'], );
-
+            return response()->json(['error' => 'verified', 'message' => 'User has been verified.'], );
         }
     }
 
 
-    public function resend(Request $request)
+    public function resend(ResendVerificationRequest $request)
     {
-        $request->validate(['email' => 'required|email']);
-
         $user = User::where('email', $request->email)->first();
 
         if (!$user) {
@@ -50,7 +47,7 @@ class VerificationController extends Controller
         $user->sendEmailVerificationNotification();
 
         return response()->json(['message' => 'Verification link sent.']);
-    }
 
+    }
 
 }
