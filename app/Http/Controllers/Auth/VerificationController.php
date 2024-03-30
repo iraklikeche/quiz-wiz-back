@@ -19,15 +19,15 @@ class VerificationController extends Controller
         }
 
         if (!URL::hasValidSignature($request)) {
-            return response()->json(['error' => 'link_expired', 'message' => 'Verification link is expired.']);
+            return response()->json([ 'message' => 'Verification link is expired.']);
         }
 
         if ($user->hasVerifiedEmail()) {
-            return response()->json(['error' => 'already_verified', 'message' => 'User is already verified.'], );
+            return response()->json([ 'message' => 'User is already verified.'], 422);
 
         } else {
             $user->markEmailAsVerified();
-            return response()->json(['error' => 'verified', 'message' => 'User has been verified.'], );
+            return response()->json(['message' => 'User has been verified.'], );
         }
     }
 
