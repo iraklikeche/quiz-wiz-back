@@ -18,5 +18,11 @@ Route::controller(SessionController::class)->group(function () {
     Route::post('/reset-password', 'resetPassword');
 });
 
-Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'])
-    ->name('verification.verify')->middleware('signed');
+Route::prefix('/email')->controller(VerificationController::class)->group(function () {
+    Route::get('/verify/{id}/{hash}', 'verify')
+         ->name('verification.verify')
+         ->middleware('signed');
+
+    Route::post('/resend', 'resend')
+         ->name('verification.resend');
+});
