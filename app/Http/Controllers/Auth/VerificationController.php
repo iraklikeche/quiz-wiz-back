@@ -19,11 +19,11 @@ class VerificationController extends Controller
         }
 
         if (!URL::hasValidSignature($request)) {
-            return response()->json([ 'message' => 'Verification link is expired.']);
+            return response()->json(['message' => 'Verification link is expired.']);
         }
 
         if ($user->hasVerifiedEmail()) {
-            return response()->json([ 'message' => 'User is already verified.'], 422);
+            return response()->json(['message' => 'User is already verified.'], 422);
 
         } else {
             $user->markEmailAsVerified();
@@ -32,9 +32,9 @@ class VerificationController extends Controller
     }
 
 
-    public function resend(ResendVerificationRequest $request)
+    public function resend(Request $request)
     {
-        $user = User::where('email', $request->email)->first();
+        $user = User::where('id', $request->id)->first();
 
         if (!$user) {
             return response()->json(['message' => 'No user could be found with this email address.'], 404);
