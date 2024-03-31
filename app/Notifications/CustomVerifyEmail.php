@@ -56,10 +56,6 @@ class CustomVerifyEmail extends Notification
         );
 
         $fullUrl = config('app.frontend_url') . '/login?verify_url=' . urlencode($tempUrl);
-        // $fullUrl = config('app.frontend_url') . '/login?verify_url=' . http_build_query([
-        // 'id' => $notifiable->getKey(),
-        // 'hash' => sha1($notifiable->getEmailForVerification())
-        // ]);
 
         return $fullUrl;
 
