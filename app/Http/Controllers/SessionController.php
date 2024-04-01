@@ -26,6 +26,12 @@ class SessionController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
+            $user = Auth::user();
+            if (!$user->hasVerifiedEmail()) {
+                return response()->json([
+                    'message' => 'You need to verify your email address before you can log in.'
+                ], 403);
+            }
             $request->session()->regenerate();
 
             return response()->json([
