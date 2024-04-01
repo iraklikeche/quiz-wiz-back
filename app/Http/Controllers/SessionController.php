@@ -24,9 +24,11 @@ class SessionController extends Controller
     {
 
         $credentials = $request->only('email', 'password');
+        $remember = $request->input('remember', false);
+
         if (Auth::attemptWhen($credentials, function (User $user) {
             return $user->hasVerifiedEmail();
-        })) {
+        }, $remember)) {
             $request->session()->regenerate();
 
             return response()->json([
