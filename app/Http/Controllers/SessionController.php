@@ -90,6 +90,8 @@ class SessionController extends Controller
 
         if ($status === Password::PASSWORD_RESET) {
             return response()->json(['status' => __($status)]);
+        } elseif ($status === Password::INVALID_TOKEN) {
+            return response()->json(['error' => 'The password reset link is expired or invalid.'], 422);
         }
 
         return response()->json(['email' => [__($status)]], 400);
