@@ -18,6 +18,8 @@ Route::controller(SessionController::class)->group(function () {
     Route::post('/reset-password', 'resetPassword');
 });
 
+
+
 Route::prefix('/email')->controller(VerificationController::class)->group(function () {
     Route::get('/verify/{id}/{hash}', 'verify')
          ->name('verification.verify')
