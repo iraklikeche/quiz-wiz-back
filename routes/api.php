@@ -10,13 +10,15 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::controller(SessionController::class)->group(function () {
-    Route::post('/register', 'register');
+    Route::middleware('guest')->group(function () {
+        Route::post('/register', 'register');
+        Route::post('/login', 'login');
+        Route::post('/forgot-password', 'forgotPassword');
+        Route::post('/reset-password', 'resetPassword');
+        Route::post('/reset-password/resend', 'resendResetLink');
+    });
 
-    Route::post('/login', 'login');
     Route::post('/logout', 'logout')->middleware('auth:sanctum');
-    Route::post('/forgot-password', 'forgotPassword');
-    Route::post('/reset-password', 'resetPassword');
-    Route::post('/reset-password/resend', 'resendResetLink');
 
 });
 
