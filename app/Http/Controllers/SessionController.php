@@ -96,4 +96,16 @@ class SessionController extends Controller
 
         return response()->json(['email' => [__($status)]], 400);
     }
+    public function resendResetLink(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+
+        $status = Password::sendResetLink($request->only('email'));
+
+        if ($status === Password::RESET_LINK_SENT) {
+            return response()->json(['status' => 'success', 'message' => __($status)]);
+        }
+
+        return response()->json(['status' => 'error', 'message' => __($status)], 400);
+    }
 }
