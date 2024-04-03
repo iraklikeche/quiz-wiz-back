@@ -16,6 +16,7 @@ class SessionController extends Controller
     public function register(RegisterUserRequest $request)
     {
 
+
         $user = User::create($request->validated());
 
         $user->sendEmailVerificationNotification();
@@ -25,6 +26,7 @@ class SessionController extends Controller
 
     public function login(LoginUserRequest $request)
     {
+
 
         $credentials = $request->only('email', 'password');
         $remember = $request->input('remember', false);
@@ -55,6 +57,7 @@ class SessionController extends Controller
 
     public function forgotPassword(Request $request)
     {
+
         $request->validate(['email' => 'required|email']);
 
         $status = Password::sendResetLink(
@@ -75,6 +78,8 @@ class SessionController extends Controller
             'email' => 'required|email',
             'password' => 'required|confirmed|min:3',
         ]);
+
+
 
         $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
