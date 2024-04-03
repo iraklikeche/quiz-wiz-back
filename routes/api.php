@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\SessionController;
+use App\Http\Middleware\CheckLoggedIn;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -10,7 +11,7 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::controller(SessionController::class)->group(function () {
-    Route::middleware('guest')->group(function () {
+    Route::middleware([CheckLoggedIn::class])->group(function () {
         Route::post('/register', 'register');
         Route::post('/login', 'login');
         Route::post('/forgot-password', 'forgotPassword');
