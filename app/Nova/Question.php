@@ -50,55 +50,10 @@ class Question extends Resource
                 ->sortable()
                 ->rules('required'),
 
-            // Assuming a question belongs to a quiz
             BelongsTo::make('Quiz'),
 
-            // If a question has many answers
-            // HasMany::make('Answers'),
+            HasMany::make('Answers'),
         ];
     }
 
-    /**
-     * Get the cards available for the request.
-     *
-     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
-     * @return array
-     */
-    public function cards(NovaRequest $request)
-    {
-        return [];
-    }
-
-    /**
-     * Get the filters available for the resource.
-     *
-     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
-     * @return array
-     */
-    public function filters(NovaRequest $request)
-    {
-        return [];
-    }
-
-    /**
-     * Get the lenses available for the resource.
-     *
-     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
-     * @return array
-     */
-    public function lenses(NovaRequest $request)
-    {
-        return [];
-    }
-
-    /**
-     * Get the actions available for the resource.
-     *
-     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
-     * @return array
-     */
-    public function actions(NovaRequest $request)
-    {
-        return [];
-    }
 }

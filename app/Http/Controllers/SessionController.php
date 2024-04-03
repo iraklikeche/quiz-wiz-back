@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\LoginUserRequest;
 use App\Http\Requests\RegisterUserRequest;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -13,7 +14,7 @@ use Illuminate\Support\Str;
 
 class SessionController extends Controller
 {
-    public function register(RegisterUserRequest $request)
+    public function register(RegisterUserRequest $request): JsonResponse
     {
 
 
@@ -24,7 +25,7 @@ class SessionController extends Controller
         return response()->json(['message' => 'User successfully registered.']);
     }
 
-    public function login(LoginUserRequest $request)
+    public function login(LoginUserRequest $request): JsonResponse
     {
 
 
@@ -48,14 +49,14 @@ class SessionController extends Controller
 
     }
 
-    public function logout(Request $request)
+    public function logout(Request $request): JsonResponse
     {
         auth('web')->logout();
 
         return response()->json(['message' => 'You have been successfully logged out!']);
     }
 
-    public function forgotPassword(Request $request)
+    public function forgotPassword(Request $request): JsonResponse
     {
 
         $request->validate(['email' => 'required|email']);
@@ -71,7 +72,7 @@ class SessionController extends Controller
         return response()->json(['email' => __($status)], 400);
     }
 
-    public function resetPassword(Request $request)
+    public function resetPassword(Request $request): JsonResponse
     {
         $request->validate([
             'token' => 'required',
@@ -101,7 +102,7 @@ class SessionController extends Controller
 
         return response()->json(['email' => [__($status)]], 400);
     }
-    public function resendResetLink(Request $request)
+    public function resendResetLink(Request $request): JsonResponse
     {
         $request->validate(['email' => 'required|email']);
 

@@ -5,12 +5,13 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ResendVerificationRequest;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 
 class VerificationController extends Controller
 {
-    public function verify(Request $request, $id, $hash)
+    public function verify(Request $request, $id, $hash): JsonResponse
     {
         $user = User::findOrFail($id);
 
@@ -32,7 +33,7 @@ class VerificationController extends Controller
     }
 
 
-    public function resend(Request $request)
+    public function resend(Request $request): JsonResponse
     {
         $user = User::where('id', $request->id)->first();
 

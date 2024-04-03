@@ -23,7 +23,6 @@ class Category extends Resource
      *
      * @var string
      */
-    // public static $title = 'id';
     public static $title = 'name';
 
 
@@ -46,60 +45,12 @@ class Category extends Resource
     {
         return [
             ID::make()->sortable(),
-            // BelongsToMany::make('Quiz'),
 
             Text::make('Name')
                 ->sortable()
                 ->rules('required', 'max:255'),
-
-                // BelongsToMany::make('Quizzes', 'quizzes', Quiz::class)->searchable(),
                 BelongsToMany::make('Quizzes')->searchable(),
-
-
             ];
     }
 
-    /**
-     * Get the cards available for the request.
-     *
-     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
-     * @return array
-     */
-    public function cards(NovaRequest $request)
-    {
-        return [];
-    }
-
-    /**
-     * Get the filters available for the resource.
-     *
-     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
-     * @return array
-     */
-    public function filters(NovaRequest $request)
-    {
-        return [];
-    }
-
-    /**
-     * Get the lenses available for the resource.
-     *
-     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
-     * @return array
-     */
-    public function lenses(NovaRequest $request)
-    {
-        return [];
-    }
-
-    /**
-     * Get the actions available for the resource.
-     *
-     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
-     * @return array
-     */
-    public function actions(NovaRequest $request)
-    {
-        return [];
-    }
 }

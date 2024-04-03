@@ -52,11 +52,7 @@ class Quiz extends Resource
                 ->sortable()
                 ->rules('required', 'max:255'),
 
-            // BelongsToMany::make('Categories'),
-            // BelongsToMany::make('Categories')->searchable(),
             BelongsToMany::make('Categories')->searchable(),
-
-
 
             Text::make('Difficulty Level')
                 ->sortable()
@@ -84,47 +80,5 @@ class Quiz extends Resource
         ];
     }
 
-    /**
-     * Get the cards available for the request.
-     *
-     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
-     * @return array
-     */
-    public function cards(NovaRequest $request)
-    {
-        return [];
-    }
-
-    /**
-     * Get the filters available for the resource.
-     *
-     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
-     * @return array
-     */
-    public function filters(NovaRequest $request)
-    {
-        return [];
-    }
-
-    /**
-     * Get the lenses available for the resource.
-     *
-     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
-     * @return array
-     */
-    public function lenses(NovaRequest $request)
-    {
-        return [];
-    }
-
-    /**
-     * Get the actions available for the resource.
-     *
-     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
-     * @return array
-     */
-    public function actions(NovaRequest $request)
-    {
-        return [];
-    }
+   
 }
