@@ -29,4 +29,8 @@ class Quiz extends Model
     {
         return $this->belongsTo(DifficultyLevel::class);
     }
+    public function getImageUrlAttribute()
+    {
+        return $this->image ? asset('storage/' . $this->image) : null;
+    }
 }
