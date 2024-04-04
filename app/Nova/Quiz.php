@@ -11,6 +11,7 @@ use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\HasMany;
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\Image;
 
 class Quiz extends Resource
 {
@@ -54,9 +55,10 @@ class Quiz extends Resource
 
             BelongsToMany::make('Categories')->searchable(),
 
-            Text::make('Difficulty Level')
-                ->sortable()
-                ->rules('required', 'max:255'),
+            // Text::make('Difficulty Level')
+            //     ->sortable()
+            //     ->rules('required', 'max:255'),
+
 
             Number::make('Total Points')
                 ->sortable()
@@ -77,8 +79,15 @@ class Quiz extends Resource
                 ->rules('required', 'integer', 'min:0'),
 
             HasMany::make('Questions'),
-        ];
+
+            Image::make('Image')
+                ->disk('public')
+                ->path('quizzes')
+                ->rules('required', 'image'),
+
+            BelongsTo::make('Difficulty Level', 'difficultyLevel', DifficultyLevel::class)->sortable(),
+            ];
     }
 
-   
+
 }

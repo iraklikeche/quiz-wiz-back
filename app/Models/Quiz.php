@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Quiz extends Model
 {
     use HasFactory;
+    protected $guarded = [];
 
 
     public function categories(): BelongsToMany
@@ -22,5 +23,10 @@ class Quiz extends Model
     public function questions(): HasMany
     {
         return $this->hasMany(Question::class);
+    }
+
+    public function difficultyLevel()
+    {
+        return $this->belongsTo(DifficultyLevel::class);
     }
 }
