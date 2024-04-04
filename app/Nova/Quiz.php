@@ -55,10 +55,6 @@ class Quiz extends Resource
 
             BelongsToMany::make('Categories')->searchable(),
 
-            // Text::make('Difficulty Level')
-            //     ->sortable()
-            //     ->rules('required', 'max:255'),
-
 
             Number::make('Total Points')
                 ->sortable()
@@ -81,7 +77,6 @@ class Quiz extends Resource
             HasMany::make('Questions'),
 
             Image::make('Image')
-                ->disk('public')
                 ->path('quizzes')
                 ->rules('required', 'image'),
 
