@@ -20,8 +20,8 @@ class QuizController extends Controller
                 'title' => $quiz->title,
                 'image' => $quiz->imageUrl,
                 'totalTime' => $quiz->estimated_time,
-            'totalPoints' => $quiz->total_points,
-            'numberOfQuestions' => $quiz->questions->count(),
+                'totalPoints' => $quiz->total_points,
+                'numberOfQuestions' => $quiz->questions->count(),
                 'difficultyLevel' => [
                     'name' => $quiz->difficultyLevel->name,
                     'textColor' => $quiz->difficultyLevel->text_color,
