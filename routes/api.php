@@ -33,4 +33,9 @@ Route::prefix('/email')->controller(VerificationController::class)->group(functi
          ->name('verification.resend');
 });
 
-Route::get('/quizzes', [QuizController::class, 'index']);
+
+Route::controller(QuizController::class)->group(function () {
+    Route::get('/quizzes/search', 'search');
+    Route::get('/quizzes', 'index');
+    Route::get('quizzes/{id}', 'show');
+});

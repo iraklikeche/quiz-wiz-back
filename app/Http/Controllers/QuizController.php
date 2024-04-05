@@ -4,33 +4,34 @@ namespace App\Http\Controllers;
 
 use App\Models\Quiz;
 use Illuminate\Http\Request;
+use App\Http\Resources\QuizResource;
+
 use Illuminate\Support\Facades\Storage;
 
 class QuizController extends Controller
 {
     public function index()
     {
-        $quizzes = Quiz::with(['difficultyLevel', 'categories'])->get();
+        $quizzes = Quiz::with(['difficultyLevel', 'categories', 'questions',])->paginate(6);
+        return QuizResource::collection($quizzes);
+    }
 
-        $quizzes = $quizzes->map(function ($quiz) {
-            $imageUrl = $quiz->image ? Storage::disk('public')->url($quiz->image) : null;
+    public function show($id)
+    {
+        $quiz = Quiz::with(['difficultyLevel', 'categories', 'questions',])->findOrFail($id);
+        return new QuizResource($quiz);
 
-            return [
-                'id' => $quiz->id,
-                'title' => $quiz->title,
-                'image' => $quiz->imageUrl,
-                'totalTime' => $quiz->estimated_time,
-                'totalPoints' => $quiz->total_points,
-                'numberOfQuestions' => $quiz->questions->count(),
-                'difficultyLevel' => [
-                    'name' => $quiz->difficultyLevel->name,
-                    'textColor' => $quiz->difficultyLevel->text_color,
-                    'backgroundColor' => $quiz->difficultyLevel->background_color,
-                ],
-                'categories' => $quiz->categories
-            ];
-        });
+    }
+    public function search(Request $request)
+    {
+        $query = Quiz::query();
 
-        return response()->json($quizzes);
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where('title', 'like', "%$search%");
+        }
+
+        $quizzes = $query->with(['difficultyLevel', 'categories', 'questions'])->get();
+        return QuizResource::collection($quizzes);
     }
 }

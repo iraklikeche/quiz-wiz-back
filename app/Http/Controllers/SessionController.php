@@ -102,6 +102,8 @@ class SessionController extends Controller
 
         return response()->json(['email' => [__($status)]], 400);
     }
+
+
     public function resendResetLink(Request $request): JsonResponse
     {
         $request->validate(['email' => 'required|email']);
