@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\VerificationController;
+use App\Http\Controllers\QuizController;
 use App\Http\Controllers\SessionController;
 use App\Http\Middleware\CheckLoggedIn;
 use Illuminate\Http\Request;
@@ -23,8 +24,6 @@ Route::controller(SessionController::class)->group(function () {
 
 });
 
-
-
 Route::prefix('/email')->controller(VerificationController::class)->group(function () {
     Route::get('/verify/{id}/{hash}', 'verify')
          ->name('verification.verify')
@@ -33,3 +32,5 @@ Route::prefix('/email')->controller(VerificationController::class)->group(functi
     Route::post('/resend', 'resend')
          ->name('verification.resend');
 });
+
+Route::get('/quizzes', [QuizController::class, 'index']);
