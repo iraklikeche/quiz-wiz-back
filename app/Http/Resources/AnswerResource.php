@@ -18,5 +18,6 @@ class AnswerResource extends JsonResource
             'id' => $this->id,
             'text' => $this->text,
             'isCorrect' => $this->is_correct,
-        ];    }
+        ];
+    }
 }
