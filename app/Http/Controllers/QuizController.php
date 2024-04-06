@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CategoryResource;
+use App\Http\Resources\DifficultyLevelResource;
 use App\Models\Quiz;
 use Illuminate\Http\Request;
 use App\Http\Resources\QuizResource;
-
+use App\Models\Category;
+use App\Models\DifficultyLevel;
 use Illuminate\Support\Facades\Storage;
 
 class QuizController extends Controller
@@ -34,4 +37,18 @@ class QuizController extends Controller
         $quizzes = $query->with(['difficultyLevel', 'categories', 'questions'])->get();
         return QuizResource::collection($quizzes);
     }
+
+
+    public function getAllCategories()
+    {
+        $categories = Category::all(['id', 'name']);
+        return CategoryResource::collection($categories);
+    }
+
+    public function getAllDifficultyLevels()
+    {
+        $difficultyLevels = DifficultyLevel::all(['id', 'name', 'text_color', 'background_color']);
+        return DifficultyLevelResource::collection($difficultyLevels);
+    }
+
 }
