@@ -6,6 +6,7 @@ use App\Http\Controllers\SessionController;
 use App\Http\Middleware\CheckLoggedIn;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -20,8 +21,11 @@ Route::controller(SessionController::class)->group(function () {
         Route::post('/reset-password/resend', 'resendResetLink');
     });
 
-    Route::post('/logout', 'logout')->middleware('auth');
-
+    Route::post('/logout', function () {
+        Auth::guard('web')->logout();
+        request()->session()->flush();
+        return response()->json(['message' => 'Logged out'], 200);
+    })->middleware('auth:sanctum');
 });
 
 Route::prefix('/email')->controller(VerificationController::class)->group(function () {
