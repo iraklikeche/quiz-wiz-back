@@ -51,9 +51,10 @@ class SessionController extends Controller
 
     public function logout(Request $request): JsonResponse
     {
-        Auth::guard('web')->logout();
-        request()->session()->flush();
-        return response()->json(['message' => 'Logged out'], 200);
+        auth('web')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return response()->json(['message' => 'You have been successfully logged out!']);
     }
 
     public function forgotPassword(Request $request): JsonResponse

@@ -21,8 +21,7 @@ Route::controller(SessionController::class)->group(function () {
         Route::post('/reset-password/resend', 'resendResetLink');
     });
 
-    Route::post('/logout', function () {
-    })->middleware('auth:sanctum');
+    Route::post('/logout', 'logout')->middleware('auth:sanctum');
 });
 
 Route::prefix('/email')->controller(VerificationController::class)->group(function () {
