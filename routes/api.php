@@ -20,7 +20,7 @@ Route::controller(SessionController::class)->group(function () {
         Route::post('/reset-password/resend', 'resendResetLink');
     });
 
-    Route::post('/logout', 'logout')->middleware('auth:sanctum');
+    Route::post('/logout', 'logout')->middleware('auth');
 
 });
 
