@@ -13,12 +13,57 @@ use Illuminate\Support\Facades\Storage;
 
 class QuizController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $quizzes = Quiz::with(['difficultyLevel', 'categories', 'questions',])->paginate(6);
-        return QuizResource::collection($quizzes);
-    }
 
+        $query = Quiz::with(['difficultyLevel', 'categories', 'questions']);
+
+        // Filter by categories
+        if ($request->has('categories')) {
+            $categories = explode(',', $request->input('categories'));
+            // $query->whereHas('categories', function ($q) use ($categories) {
+            //     $q->whereIn('id', $categories);
+            // });
+            $query->whereHas('categories', function ($q) use ($categories) {
+                $q->whereIn('categories.id', $categories);
+            });
+
+        }
+
+        // Filter by difficulty levels
+        if ($request->has('difficulties')) {
+            $difficulties = explode(',', $request->input('difficulties'));
+            $query->whereIn('difficulty_level_id', $difficulties);
+        }
+
+        // Sorting
+        if ($request->has('sort')) {
+            switch ($request->input('sort')) {
+                case 'alphabet':
+                    $query->orderBy('title');
+                    break;
+                case 'reverse-alphabet':
+                    $query->orderByDesc('title');
+                    break;
+                    // case 'most-popular':
+                    //     // Assumes there's a way to measure popularity, e.g., a 'views' column
+                    //     $query->orderByDesc('views');
+                    //     break;
+                case 'newest':
+                    $query->orderByDesc('created_at');
+                    break;
+                case 'oldest':
+                    $query->orderBy('created_at');
+                    break;
+            }
+        }
+
+        $quizzes = $query->paginate(6);
+        return QuizResource::collection($quizzes);
+        // $quizzes = Quiz::with(['difficultyLevel', 'categories', 'questions',])->paginate(6);
+        // return QuizResource::collection($quizzes);
+    }
+    // ****************************
     public function show($id)
     {
         $quiz = Quiz::with(['difficultyLevel', 'categories', 'questions',])->findOrFail($id);
