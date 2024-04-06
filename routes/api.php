@@ -22,9 +22,6 @@ Route::controller(SessionController::class)->group(function () {
     });
 
     Route::post('/logout', function () {
-        Auth::guard('web')->logout();
-        request()->session()->flush();
-        return response()->json(['message' => 'Logged out'], 200);
     })->middleware('auth:sanctum');
 });
 
