@@ -33,4 +33,5 @@ class Quiz extends Model
     {
         return $this->image ? asset('storage/' . $this->image) : null;
     }
+
 }

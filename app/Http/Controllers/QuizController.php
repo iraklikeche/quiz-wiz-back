@@ -17,13 +17,14 @@ class QuizController extends Controller
     {
 
         $query = Quiz::with(['difficultyLevel', 'categories', 'questions']);
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where('title', 'like', "%{$search}%");
+        }
 
         // Filter by categories
         if ($request->has('categories')) {
             $categories = explode(',', $request->input('categories'));
-            // $query->whereHas('categories', function ($q) use ($categories) {
-            //     $q->whereIn('id', $categories);
-            // });
             $query->whereHas('categories', function ($q) use ($categories) {
                 $q->whereIn('categories.id', $categories);
             });
@@ -70,18 +71,6 @@ class QuizController extends Controller
         return new QuizResource($quiz);
 
     }
-    public function search(Request $request)
-    {
-        $query = Quiz::query();
-
-        if ($request->has('search')) {
-            $search = $request->input('search');
-            $query->where('title', 'like', "%$search%");
-        }
-
-        $quizzes = $query->with(['difficultyLevel', 'categories', 'questions'])->get();
-        return QuizResource::collection($quizzes);
-    }
 
 
     public function getAllCategories()
@@ -95,5 +84,7 @@ class QuizController extends Controller
         $difficultyLevels = DifficultyLevel::all(['id', 'name', 'text_color', 'background_color']);
         return DifficultyLevelResource::collection($difficultyLevels);
     }
+
+
 
 }
