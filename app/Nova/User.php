@@ -10,6 +10,7 @@ use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Password;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
+use Laravel\Nova\Fields\Image;
 
 class User extends Resource
 {
@@ -65,6 +66,10 @@ class User extends Resource
                 ->updateRules('nullable', Rules\Password::defaults()),
 
                 Boolean::make('Agreed To Terms'),
+                Image::make('Avatar')
+                ->path('avatars')
+                ->rules('nullable', 'image'),
+
         ];
     }
 

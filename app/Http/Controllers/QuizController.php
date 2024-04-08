@@ -15,7 +15,7 @@ class QuizController extends Controller
     public function index(Request $request)
     {
 
-        $query = Quiz::with(['difficultyLevel', 'categories', 'questions'])
+        $query = Quiz::with(['difficultyLevel', 'categories', 'questions.answers'])
         ->search($request->input('search'))
         ->filterByCategories($request->input('categories'))
         ->filterByDifficulties($request->input('difficulties'))
@@ -27,7 +27,7 @@ class QuizController extends Controller
     }
     public function show($id)
     {
-        $quiz = Quiz::with(['difficultyLevel', 'categories', 'questions',])->findOrFail($id);
+        $quiz = Quiz::with(['difficultyLevel', 'categories', 'questions.answers',])->findOrFail($id);
         return new QuizResource($quiz);
 
     }
