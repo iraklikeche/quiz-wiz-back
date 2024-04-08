@@ -6,7 +6,6 @@ use App\Http\Controllers\SessionController;
 use App\Http\Middleware\CheckLoggedIn;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -35,7 +34,6 @@ Route::prefix('/email')->controller(VerificationController::class)->group(functi
 
 
 Route::controller(QuizController::class)->group(function () {
-    Route::get('/quizzes/search', 'search');
     Route::get('/quizzes', 'index');
     Route::get('quizzes/{id}', 'show');
     Route::get('/categories', 'getAllCategories');

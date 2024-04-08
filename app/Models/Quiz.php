@@ -33,4 +33,50 @@ class Quiz extends Model
     {
         return $this->image ? asset('storage/' . $this->image) : null;
     }
+
+    public function scopeSearch($query, $term)
+    {
+        if ($term) {
+            $query->where('title', 'like', "%{$term}%");
+        }
+    }
+
+
+    public function scopeFilterByCategories($query, $categories)
+    {
+        if ($categories) {
+            $categoriesArray = is_array($categories) ? $categories : explode(',', $categories);
+            $query->whereHas('categories', function ($q) use ($categoriesArray) {
+                $q->whereIn('categories.id', $categoriesArray);
+            });
+        }
+    }
+
+    public function scopeFilterByDifficulties($query, $difficulties)
+    {
+        if ($difficulties) {
+            $difficultiesArray = is_array($difficulties) ? $difficulties : explode(',', $difficulties);
+            $query->whereIn('difficulty_level_id', $difficultiesArray);
+        }
+    }
+
+
+    public function scopeSortBy($query, $criteria)
+    {
+        switch ($criteria) {
+            case 'alphabet':
+                $query->orderBy('title');
+                break;
+            case 'reverse-alphabet':
+                $query->orderByDesc('title');
+                break;
+            case 'newest':
+                $query->orderByDesc('created_at');
+                break;
+            case 'oldest':
+                $query->orderBy('created_at');
+                break;
+        }
+    }
+
 }
