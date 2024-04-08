@@ -18,8 +18,6 @@ class QuestionResource extends JsonResource
             'id' => $this->id,
             'text' => $this->text,
             'answers' => AnswerResource::collection($this->answers),
-            // 'answers' => AnswerResource::collection($this->answers),
-
         ];
     }
 }
