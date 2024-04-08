@@ -41,25 +41,25 @@ class Quiz extends Model
         }
     }
 
-    public function scopeWithCategories($query, $categories)
+
+    public function scopeFilterByCategories($query, $categories)
     {
         if ($categories) {
             $categoriesArray = is_array($categories) ? $categories : explode(',', $categories);
-
             $query->whereHas('categories', function ($q) use ($categoriesArray) {
                 $q->whereIn('categories.id', $categoriesArray);
             });
         }
     }
 
-    public function scopeWithDifficulties($query, $difficulties)
+    public function scopeFilterByDifficulties($query, $difficulties)
     {
         if ($difficulties) {
             $difficultiesArray = is_array($difficulties) ? $difficulties : explode(',', $difficulties);
-
             $query->whereIn('difficulty_level_id', $difficultiesArray);
         }
     }
+
 
     public function scopeSortBy($query, $criteria)
     {

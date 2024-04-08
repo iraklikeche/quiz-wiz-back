@@ -17,8 +17,8 @@ class QuizController extends Controller
 
         $query = Quiz::with(['difficultyLevel', 'categories', 'questions'])
         ->search($request->input('search'))
-        ->withCategories($request->input('categories'))
-        ->withDifficulties($request->input('difficulties'))
+        ->filterByCategories($request->input('categories'))
+        ->filterByDifficulties($request->input('difficulties'))
         ->sortBy($request->input('sort'));
 
         $quizzes = $query->paginate(6);
