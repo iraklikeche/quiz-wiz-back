@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 use App\Http\Resources\QuizResource;
 use App\Models\Category;
 use App\Models\DifficultyLevel;
-use Illuminate\Support\Facades\Storage;
 
 class QuizController extends Controller
 {
@@ -22,7 +21,6 @@ class QuizController extends Controller
             $query->where('title', 'like', "%{$search}%");
         }
 
-        // Filter by categories
         if ($request->has('categories')) {
             $categories = explode(',', $request->input('categories'));
             $query->whereHas('categories', function ($q) use ($categories) {
@@ -31,7 +29,6 @@ class QuizController extends Controller
 
         }
 
-        // Filter by difficulty levels
         if ($request->has('difficulties')) {
             $difficulties = explode(',', $request->input('difficulties'));
             $query->whereIn('difficulty_level_id', $difficulties);
@@ -46,6 +43,7 @@ class QuizController extends Controller
                 case 'reverse-alphabet':
                     $query->orderByDesc('title');
                     break;
+                    // I don't have user-quiz relation yet
                     // case 'most-popular':
                     //     // Assumes there's a way to measure popularity, e.g., a 'views' column
                     //     $query->orderByDesc('views');
@@ -61,10 +59,8 @@ class QuizController extends Controller
 
         $quizzes = $query->paginate(6);
         return QuizResource::collection($quizzes);
-        // $quizzes = Quiz::with(['difficultyLevel', 'categories', 'questions',])->paginate(6);
-        // return QuizResource::collection($quizzes);
+
     }
-    // ****************************
     public function show($id)
     {
         $quiz = Quiz::with(['difficultyLevel', 'categories', 'questions',])->findOrFail($id);
