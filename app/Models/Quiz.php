@@ -59,7 +59,15 @@ class Quiz extends Model
             $query->whereIn('difficulty_level_id', $difficultiesArray);
         }
     }
-
+    public function scopeSimilarTo($query, $id, $categoryIds)
+    {
+        return $query->whereHas('categories', function ($query) use ($categoryIds) {
+            $query->whereIn('categories.id', $categoryIds);
+        })
+        ->where('id', '!=', $id)
+        ->with(['categories', 'questions.answers', 'difficultyLevel'])
+        ->take(3);
+    }
 
     public function scopeSortBy($query, $criteria)
     {

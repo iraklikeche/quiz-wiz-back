@@ -14,7 +14,6 @@ class QuizController extends Controller
 {
     public function index(Request $request)
     {
-
         $query = Quiz::with(['difficultyLevel', 'categories', 'questions.answers'])
         ->search($request->input('search'))
         ->filterByCategories($request->input('categories'))
@@ -45,6 +44,15 @@ class QuizController extends Controller
         return DifficultyLevelResource::collection($difficultyLevels);
     }
 
+    public function similarQuizzes($id)
+    {
+        $quiz = Quiz::findOrFail($id);
+        $categoryIds = $quiz->categories->pluck('id');
 
+        $similarQuizzes = Quiz::similarTo($id, $categoryIds)->get();
+
+        return QuizResource::collection($similarQuizzes);
+
+    }
 
 }
