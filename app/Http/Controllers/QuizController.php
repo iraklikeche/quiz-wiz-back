@@ -44,15 +44,15 @@ class QuizController extends Controller
         return DifficultyLevelResource::collection($difficultyLevels);
     }
 
-    public function similarQuizzes($id)
-    {
-        $quiz = Quiz::findOrFail($id);
-        $categoryIds = $quiz->categories->pluck('id');
 
-        $similarQuizzes = Quiz::similarTo($id, $categoryIds)->get();
+    public function similarQuizzesByCategories(Request $request)
+    {
+        $categoryIds = explode(',', $request->query('categoryIds'));
+        $excludeQuizId = $request->query('excludeQuizId');
+
+        $similarQuizzes = Quiz::similarToCategories($categoryIds, $excludeQuizId)->get();
 
         return QuizResource::collection($similarQuizzes);
-
     }
 
 }
