@@ -12,6 +12,7 @@ use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\HasMany;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Image;
+use Laravel\Nova\Fields\Textarea;
 
 class Quiz extends Resource
 {
@@ -81,7 +82,16 @@ class Quiz extends Resource
                 ->rules('required', 'image'),
 
             BelongsTo::make('Difficulty Level', 'difficultyLevel', DifficultyLevel::class)->sortable(),
+            Text::make('Instruction')
+                ->sortable()
+                ->hideFromIndex(),
+
+            Textarea::make('Entry Question')
+                ->sortable()
+                ->hideFromIndex(),
+
             ];
+
     }
 
 

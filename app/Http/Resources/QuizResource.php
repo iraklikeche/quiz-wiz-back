@@ -28,6 +28,9 @@ class QuizResource extends JsonResource
             'difficultyLevel' => new DifficultyLevelResource($this->difficultyLevel),
             'categories' => CategoryResource::collection($this->categories),
             'questions' => QuestionResource::collection($this->questions),
+            'instruction' => $this->instruction,
+            'entryQuestion' => $this->entry_question,
+
         ];
     }
 }

@@ -3,13 +3,13 @@
 use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\QuizController;
 use App\Http\Controllers\SessionController;
+use App\Http\Controllers\UserController;
 use App\Http\Middleware\CheckLoggedIn;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+Route::middleware('auth:sanctum')->get('/user', [UserController::class, 'authenticatedUser']);
+
 
 Route::controller(SessionController::class)->group(function () {
     Route::middleware([CheckLoggedIn::class])->group(function () {
