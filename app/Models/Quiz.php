@@ -60,6 +60,19 @@ class Quiz extends Model
         }
     }
 
+    public function scopeSimilarToCategories($query, $categoryIds, $excludeQuizId = null)
+    {
+        return $query->whereHas('categories', function ($query) use ($categoryIds) {
+            $query->whereIn('categories.id', $categoryIds);
+        })
+        ->when($excludeQuizId, function ($query) use ($excludeQuizId) {
+            return $query->where('id', '!=', $excludeQuizId);
+        })
+        ->with(['categories', 'questions.answers', 'difficultyLevel'])
+        ->take(3);
+    }
+
+
 
     public function scopeSortBy($query, $criteria)
     {

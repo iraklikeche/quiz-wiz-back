@@ -33,9 +33,11 @@ Route::prefix('/email')->controller(VerificationController::class)->group(functi
 });
 
 
+
 Route::controller(QuizController::class)->group(function () {
     Route::get('/quizzes', 'index');
-    Route::get('quizzes/{id}', 'show');
+    Route::get('/quizzes/similar', 'similarQuizzesByCategories');
+    Route::get('/quizzes/{id}', 'show');
     Route::get('/categories', 'getAllCategories');
     Route::get('/difficulty-levels', 'getAllDifficultyLevels');
 });
