@@ -40,4 +40,6 @@ Route::controller(QuizController::class)->group(function () {
     Route::get('/quizzes/{id}', 'show');
     Route::get('/categories', 'getAllCategories');
     Route::get('/difficulty-levels', 'getAllDifficultyLevels');
+    Route::post('/quizzes/{id}/submit', 'submitAnswers');
+
 });

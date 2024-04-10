@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\QuizSubmissionRequest;
 use App\Http\Resources\CategoryResource;
 use App\Http\Resources\DifficultyLevelResource;
 use App\Models\Quiz;
@@ -9,6 +10,9 @@ use Illuminate\Http\Request;
 use App\Http\Resources\QuizResource;
 use App\Models\Category;
 use App\Models\DifficultyLevel;
+use App\Models\Question;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class QuizController extends Controller
 {
@@ -28,7 +32,6 @@ class QuizController extends Controller
     {
         $quiz = Quiz::with(['difficultyLevel', 'categories', 'questions.answers',])->findOrFail($id);
         return new QuizResource($quiz);
-
     }
 
 
@@ -53,6 +56,34 @@ class QuizController extends Controller
         $similarQuizzes = Quiz::similarToCategories($categoryIds, $excludeQuizId)->get();
 
         return QuizResource::collection($similarQuizzes);
+    }
+
+
+    public function submitAnswers(QuizSubmissionRequest $request, $id)
+    {
+        $quiz = Quiz::findOrFail($id);
+        $validated = $request->validated();
+        $userId = auth()->id();
+        $questions = Question::withCorrectAnswersCount($validated['answers'])
+                      ->whereIn('id', collect($validated['answers'])->pluck('questionId'))
+                      ->get();
+        $timeSpent = $validated['timeSpent'];
+
+        $totalScore = $questions->sum('correct_answers_count');
+
+        DB::table('quiz_user')->insert([
+            'quiz_id' => $id,
+            'user_id' => $userId,
+            'score' => $totalScore,
+            'time_spent' => $timeSpent,
+            'created_at' => now()
+
+        ]);
+
+        return response()->json([
+            'message' => 'Quiz answers submitted successfully.',
+            'score' => $totalScore,
+        ]);
     }
 
 }

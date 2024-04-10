@@ -34,6 +34,10 @@ class Quiz extends Model
         return $this->image ? asset('storage/' . $this->image) : null;
     }
 
+    public function users()
+    {
+        return $this->belongsToMany(User::class)->withTimestamps();
+    }
     public function scopeSearch($query, $term)
     {
         if ($term) {
@@ -71,7 +75,6 @@ class Quiz extends Model
         ->with(['categories', 'questions.answers', 'difficultyLevel'])
         ->take(3);
     }
-
 
 
     public function scopeSortBy($query, $criteria)
