@@ -16,6 +16,8 @@ return new class () extends Migration {
             $table->integer('time_spent')->nullable();
             $table->integer('score')->nullable();
             $table->boolean('is_guest')->default(false);
+
+
         });
     }
 
@@ -25,6 +27,7 @@ return new class () extends Migration {
             $table->unsignedBigInteger('user_id')->nullable(false)->change();
 
             $table->dropColumn(['time_spent', 'score', 'is_guest']);
+
         });
     }
 

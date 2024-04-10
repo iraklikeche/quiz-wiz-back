@@ -77,8 +77,6 @@ class Quiz extends Model
     }
 
 
-
-
     public function scopeSortBy($query, $criteria)
     {
         switch ($criteria) {

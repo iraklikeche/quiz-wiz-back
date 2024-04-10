@@ -12,6 +12,7 @@ use App\Models\Category;
 use App\Models\DifficultyLevel;
 use App\Models\Question;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class QuizController extends Controller
 {
@@ -68,16 +69,15 @@ class QuizController extends Controller
                       ->get();
         $timeSpent = $validated['timeSpent'];
 
-
         $totalScore = $questions->sum('correct_answers_count');
-
 
         DB::table('quiz_user')->insert([
             'quiz_id' => $id,
             'user_id' => $userId,
             'score' => $totalScore,
             'time_spent' => $timeSpent,
-            'completed_at' => now(),
+            'created_at' => now()
+
         ]);
 
         return response()->json([
