@@ -61,37 +61,28 @@ class QuizController extends Controller
     public function submitAnswers(QuizSubmissionRequest $request, $id)
     {
         $quiz = Quiz::findOrFail($id);
-
-
         $validated = $request->validated();
+        $userId = auth()->id();
+        $questions = Question::withCorrectAnswersCount($validated['answers'])
+                      ->whereIn('id', collect($validated['answers'])->pluck('questionId'))
+                      ->get();
+        $timeSpent = $validated['timeSpent'];
 
 
-        $score = 0;
-        foreach ($validated['answers'] as $answer) {
-            $question = Question::with('answers')->findOrFail($answer['questionId']);
-            foreach ($answer['selectedAnswerIds'] as $selectedAnswerId) {
-                $correctAnswer = $question->answers->firstWhere('id', $selectedAnswerId);
-                if ($correctAnswer && $correctAnswer->is_correct) {
-                    $score++;
-                }
-            }
-        }
+        $totalScore = $questions->sum('correct_answers_count');
 
-        $userId = auth()->check() ? auth()->id() : null;
 
-        $attempt = [
+        DB::table('quiz_user')->insert([
             'quiz_id' => $id,
             'user_id' => $userId,
-            'score' => $score,
-            'time_spent' => $validated['timeSpent'],
+            'score' => $totalScore,
+            'time_spent' => $timeSpent,
             'completed_at' => now(),
-        ];
-
-        DB::table('quiz_user')->insert($attempt);
+        ]);
 
         return response()->json([
             'message' => 'Quiz answers submitted successfully.',
-            'score' => $score,
+            'score' => $totalScore,
         ]);
     }
 

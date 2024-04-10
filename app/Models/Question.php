@@ -19,4 +19,13 @@ class Question extends Model
     {
         return $this->hasMany(Answer::class);
     }
+
+    public function scopeWithCorrectAnswersCount($query, $validatedAnswers)
+    {
+        return $query->withCount(['answers as correct_answers_count' => function ($query) use ($validatedAnswers) {
+            $query->whereIn('id', collect($validatedAnswers)->pluck('selectedAnswerIds')->flatten())
+                  ->where('is_correct', true);
+        }]);
+    }
+
 }
