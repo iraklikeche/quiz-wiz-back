@@ -12,13 +12,12 @@ use App\Models\Category;
 use App\Models\DifficultyLevel;
 use App\Models\Question;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class QuizController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Quiz::with(['difficultyLevel', 'categories', 'questions.answers'])
+        $query = Quiz::with(['difficultyLevel', 'categories', 'questions.answers', 'userAttempts'])
         ->search($request->input('search'))
         ->filterByCategories($request->input('categories'))
         ->filterByDifficulties($request->input('difficulties'))
@@ -30,7 +29,7 @@ class QuizController extends Controller
     }
     public function show($id)
     {
-        $quiz = Quiz::with(['difficultyLevel', 'categories', 'questions.answers',])->findOrFail($id);
+        $quiz = Quiz::with(['difficultyLevel', 'categories', 'questions.answers','userAttempts'])->findOrFail($id);
         return new QuizResource($quiz);
     }
 
@@ -53,7 +52,7 @@ class QuizController extends Controller
         $categoryIds = explode(',', $request->query('categoryIds'));
         $excludeQuizId = $request->query('excludeQuizId');
 
-        $similarQuizzes = Quiz::similarToCategories($categoryIds, $excludeQuizId)->get();
+        $similarQuizzes = Quiz::similarToCategories($categoryIds, $excludeQuizId)->with(['userAttempts'])->get();
 
         return QuizResource::collection($similarQuizzes);
     }
@@ -64,6 +63,9 @@ class QuizController extends Controller
         $quiz = Quiz::findOrFail($id);
         $validated = $request->validated();
         $userId = auth()->id();
+        if ($userId && $quiz->hasUserCompletedQuiz($userId)) {
+            return response()->json(['message' => 'You have already completed this quiz.'], 403);
+        }
         $questions = Question::withCorrectAnswersCount($validated['answers'])
                       ->whereIn('id', collect($validated['answers'])->pluck('questionId'))
                       ->get();
