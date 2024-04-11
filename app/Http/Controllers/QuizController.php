@@ -23,6 +23,20 @@ class QuizController extends Controller
         ->filterByDifficulties($request->input('difficulties'))
         ->sortBy($request->input('sort'));
 
+
+        if (auth()->check()) {
+            $userId = auth()->id();
+
+            if ($request->input('my_quizzes') == 'true') {
+                $query->myQuizzes($userId);
+            }
+
+            if ($request->input('not_completed') == 'true') {
+                $query->notCompletedQuizzes($userId);
+            }
+        }
+
+
         $quizzes = $query->paginate(6);
         return QuizResource::collection($quizzes);
 
@@ -49,10 +63,12 @@ class QuizController extends Controller
 
     public function similarQuizzesByCategories(Request $request)
     {
+
         $categoryIds = explode(',', $request->query('categoryIds'));
         $excludeQuizId = $request->query('excludeQuizId');
+        $userId = auth()->id();
 
-        $similarQuizzes = Quiz::similarToCategories($categoryIds, $excludeQuizId)->with(['userAttempts'])->get();
+        $similarQuizzes = Quiz::similarToCategoriesAndNotCompleted($categoryIds, $excludeQuizId, $userId)->get();
 
         return QuizResource::collection($similarQuizzes);
     }
