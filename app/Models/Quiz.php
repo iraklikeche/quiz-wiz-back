@@ -13,6 +13,8 @@ class Quiz extends Model
 {
     use HasFactory;
     protected $guarded = [];
+    protected $appends = ['total_attempts'];
+
 
 
     public function categories(): BelongsToMany
@@ -75,6 +77,20 @@ class Quiz extends Model
         ->with(['categories', 'questions.answers', 'difficultyLevel'])
         ->take(3);
     }
+
+    public function hasUserCompletedQuiz($userId)
+    {
+        return $this->users()->where('user_id', $userId)->exists();
+    }
+
+    public function userAttempts()
+    {
+
+        return $this->belongsToMany(User::class, 'quiz_user')
+        ->withPivot('score', 'time_spent', 'created_at')
+        ->withTimestamps();
+    }
+
 
 
     public function scopeSortBy($query, $criteria)

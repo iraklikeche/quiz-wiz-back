@@ -17,6 +17,9 @@ class QuizResource extends JsonResource
     {
 
         $imageUrl = $this->image ? Storage::disk('public')->url($this->image) : null;
+        $userId = auth()->id();
+        $userAttempt = $this->userAttempts->firstWhere('id', $userId);
+
 
         return [
             'id' => $this->id,
@@ -30,6 +33,11 @@ class QuizResource extends JsonResource
             'questions' => QuestionResource::collection($this->questions),
             'instruction' => $this->instruction,
             'entryQuestion' => $this->entry_question,
+            'hasUserCompletedQuiz' => $userId ? $this->hasUserCompletedQuiz($userId) : false,
+            'totalAttempts' => $this->userAttempts()->count(),
+            'userScore' => $userAttempt ? $userAttempt->pivot->score : null,
+            'timeSpent' => $userAttempt ? $userAttempt->pivot->time_spent : null,
+            'completedAt' => $userAttempt ? optional($userAttempt->pivot->created_at)->toDateTimeString() : null,
 
         ];
     }
