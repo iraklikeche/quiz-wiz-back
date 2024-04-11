@@ -48,20 +48,7 @@ class Quiz extends Model
             $query->where('title', 'like', "%{$term}%");
         }
     }
-    public function scopeSimilarToCategoriesAndNotCompleted($query, $categoryIds, $excludeQuizId = null, $userId)
-    {
-        return $query->when($excludeQuizId, function ($query) use ($excludeQuizId) {
-            $query->where('id', '!=', $excludeQuizId);
-        })
-            ->whereHas('categories', function ($query) use ($categoryIds) {
-                $query->whereIn('categories.id', $categoryIds);
-            })
-            ->whereDoesntHave('userAttempts', function ($query) use ($userId) {
-                $query->where('user_id', $userId);
-            })
-            ->with(['categories', 'questions.answers', 'difficultyLevel'])
-            ->take(3);
-    }
+
 
 
 
@@ -75,6 +62,17 @@ class Quiz extends Model
             $query->whereIn('categories.id', $categoryIds);
         });
 
+    }
+    public function scopeSimilarToCategoriesAndNotCompleted($query, $categoryIds, $excludeQuizId = null, $userId)
+    {
+        $this->scopeSimilarToCategories($query, $categoryIds, $excludeQuizId);
+
+
+        return $query->whereDoesntHave('userAttempts', function ($query) use ($userId) {
+            $query->where('user_id', $userId);
+        })
+        ->with(['categories', 'questions.answers', 'difficultyLevel'])
+        ->take(3);
     }
 
     public function scopeApplyUserFilters($query, $userId, $isMyQuizzes, $isNotCompleted)
