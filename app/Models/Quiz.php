@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Http\Resources\QuizResource;
 use App\Models\Category;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Http\Request;
 
 class Quiz extends Model
 {
@@ -48,6 +50,57 @@ class Quiz extends Model
     }
 
 
+
+
+    public function scopeSimilarToCategories($query, $categoryIds, $excludeQuizId = null)
+    {
+
+        return $query->when($excludeQuizId, function ($query) use ($excludeQuizId) {
+            $query->where('id', '!=', $excludeQuizId);
+        })
+        ->whereHas('categories', function ($query) use ($categoryIds) {
+            $query->whereIn('categories.id', $categoryIds);
+        });
+
+    }
+    public function scopeSimilarToCategoriesAndNotCompleted($query, $categoryIds, $excludeQuizId = null, $userId)
+    {
+        $this->scopeSimilarToCategories($query, $categoryIds, $excludeQuizId);
+
+
+        return $query->whereDoesntHave('userAttempts', function ($query) use ($userId) {
+            $query->where('user_id', $userId);
+        })
+        ->with(['categories', 'questions.answers', 'difficultyLevel'])
+        ->take(3);
+    }
+
+    public function scopeApplyUserFilters($query, $userId, $isMyQuizzes, $isNotCompleted)
+    {
+        $query->when($isMyQuizzes, function ($q) use ($userId) {
+            return $q->myQuizzes($userId);
+        });
+
+        $query->when($isNotCompleted, function ($q) use ($userId) {
+            return $q->notCompletedQuizzes($userId);
+        });
+    }
+
+
+    public function hasUserCompletedQuiz($userId)
+    {
+        return $this->users()->where('user_id', $userId)->exists();
+    }
+
+    public function userAttempts()
+    {
+
+        return $this->belongsToMany(User::class, 'quiz_user')
+        ->withPivot('score', 'time_spent', 'created_at')
+        ->withTimestamps();
+    }
+
+
     public function scopeFilterByCategories($query, $categories)
     {
         if ($categories) {
@@ -66,32 +119,19 @@ class Quiz extends Model
         }
     }
 
-    public function scopeSimilarToCategories($query, $categoryIds, $excludeQuizId = null)
+    public function scopeMyQuizzes($query, $userId)
     {
-        return $query->whereHas('categories', function ($query) use ($categoryIds) {
-            $query->whereIn('categories.id', $categoryIds);
-        })
-        ->when($excludeQuizId, function ($query) use ($excludeQuizId) {
-            return $query->where('id', '!=', $excludeQuizId);
-        })
-        ->with(['categories', 'questions.answers', 'difficultyLevel'])
-        ->take(3);
+        return $query->whereHas('userAttempts', function ($q) use ($userId) {
+            $q->where('user_id', $userId);
+        });
     }
 
-    public function hasUserCompletedQuiz($userId)
+    public function scopeNotCompletedQuizzes($query, $userId)
     {
-        return $this->users()->where('user_id', $userId)->exists();
+        return $query->whereDoesntHave('userAttempts', function ($q) use ($userId) {
+            $q->where('user_id', $userId);
+        });
     }
-
-    public function userAttempts()
-    {
-
-        return $this->belongsToMany(User::class, 'quiz_user')
-        ->withPivot('score', 'time_spent', 'created_at')
-        ->withTimestamps();
-    }
-
-
 
     public function scopeSortBy($query, $criteria)
     {

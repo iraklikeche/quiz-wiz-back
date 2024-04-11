@@ -17,10 +17,14 @@ class QuizController extends Controller
 {
     public function index(Request $request)
     {
+        $userId = auth()->id();
+        $isMyQuizzes = auth()->check() && $request->input('my_quizzes') === 'true';
+        $isNotCompleted = auth()->check() && $request->input('not_completed') === 'true';
         $query = Quiz::with(['difficultyLevel', 'categories', 'questions.answers', 'userAttempts'])
         ->search($request->input('search'))
         ->filterByCategories($request->input('categories'))
         ->filterByDifficulties($request->input('difficulties'))
+        ->applyUserFilters($userId, $isMyQuizzes, $isNotCompleted)
         ->sortBy($request->input('sort'));
 
         $quizzes = $query->paginate(6);
@@ -49,10 +53,12 @@ class QuizController extends Controller
 
     public function similarQuizzesByCategories(Request $request)
     {
+
         $categoryIds = explode(',', $request->query('categoryIds'));
         $excludeQuizId = $request->query('excludeQuizId');
+        $userId = auth()->id();
 
-        $similarQuizzes = Quiz::similarToCategories($categoryIds, $excludeQuizId)->with(['userAttempts'])->get();
+        $similarQuizzes = Quiz::similarToCategoriesAndNotCompleted($categoryIds, $excludeQuizId, $userId)->get();
 
         return QuizResource::collection($similarQuizzes);
     }
