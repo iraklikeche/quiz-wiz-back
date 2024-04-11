@@ -52,7 +52,7 @@ class QuizController extends Controller
         $categoryIds = explode(',', $request->query('categoryIds'));
         $excludeQuizId = $request->query('excludeQuizId');
 
-        $similarQuizzes = Quiz::similarToCategories($categoryIds, $excludeQuizId)->get();
+        $similarQuizzes = Quiz::similarToCategories($categoryIds, $excludeQuizId)->with(['userAttempts'])->get();
 
         return QuizResource::collection($similarQuizzes);
     }
