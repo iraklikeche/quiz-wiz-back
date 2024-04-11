@@ -77,6 +77,18 @@ class Quiz extends Model
 
     }
 
+    public function scopeApplyUserFilters($query, $userId, $isMyQuizzes, $isNotCompleted)
+    {
+        $query->when($isMyQuizzes, function ($q) use ($userId) {
+            return $q->myQuizzes($userId);
+        });
+
+        $query->when($isNotCompleted, function ($q) use ($userId) {
+            return $q->notCompletedQuizzes($userId);
+        });
+    }
+
+
     public function hasUserCompletedQuiz($userId)
     {
         return $this->users()->where('user_id', $userId)->exists();

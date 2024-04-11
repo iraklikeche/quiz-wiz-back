@@ -17,25 +17,15 @@ class QuizController extends Controller
 {
     public function index(Request $request)
     {
+        $userId = auth()->id();
+        $isMyQuizzes = auth()->check() && $request->input('my_quizzes') === 'true';
+        $isNotCompleted = auth()->check() && $request->input('not_completed') === 'true';
         $query = Quiz::with(['difficultyLevel', 'categories', 'questions.answers', 'userAttempts'])
         ->search($request->input('search'))
         ->filterByCategories($request->input('categories'))
         ->filterByDifficulties($request->input('difficulties'))
+        ->applyUserFilters($userId, $isMyQuizzes, $isNotCompleted)
         ->sortBy($request->input('sort'));
-
-
-        if (auth()->check()) {
-            $userId = auth()->id();
-
-            if ($request->input('my_quizzes') == 'true') {
-                $query->myQuizzes($userId);
-            }
-
-            if ($request->input('not_completed') == 'true') {
-                $query->notCompletedQuizzes($userId);
-            }
-        }
-
 
         $quizzes = $query->paginate(6);
         return QuizResource::collection($quizzes);
