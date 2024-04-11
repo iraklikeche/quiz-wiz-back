@@ -10,7 +10,6 @@ use Illuminate\Http\Request;
 use App\Http\Resources\QuizResource;
 use App\Models\Category;
 use App\Models\DifficultyLevel;
-use App\Models\Question;
 use Illuminate\Support\Facades\DB;
 
 class QuizController extends Controller
@@ -27,9 +26,25 @@ class QuizController extends Controller
         ->applyUserFilters($userId, $isMyQuizzes, $isNotCompleted)
         ->sortBy($request->input('sort'));
 
-        $quizzes = $query->paginate(6);
-        return QuizResource::collection($quizzes);
-
+        $quizzes = $query->paginate(3);
+        return response()->json([
+            'data' => QuizResource::collection($quizzes),
+            'links' => [
+                'first' => $quizzes->url(1),
+                'last' => $quizzes->url($quizzes->lastPage()),
+                'prev' => $quizzes->previousPageUrl(),
+                'next' => $quizzes->nextPageUrl(),
+            ],
+            'meta' => [
+                'current_page' => $quizzes->currentPage(),
+                'from' => $quizzes->firstItem(),
+                'last_page' => $quizzes->lastPage(),
+                'path' => $quizzes->path(),
+                'per_page' => $quizzes->perPage(),
+                'to' => $quizzes->lastItem(),
+                'total' => $quizzes->total(),
+            ],
+        ]);
     }
     public function show($id)
     {
@@ -58,7 +73,7 @@ class QuizController extends Controller
         $excludeQuizId = $request->query('excludeQuizId');
         $userId = auth()->id();
 
-        $similarQuizzes = Quiz::similarToCategoriesAndNotCompleted($categoryIds, $excludeQuizId, $userId)->get();
+        $similarQuizzes = Quiz::similarToCategoriesAndNotCompleted($categoryIds, $excludeQuizId, $userId)->with(['difficultyLevel', 'categories', 'questions.answers','userAttempts'])->get();
 
         return QuizResource::collection($similarQuizzes);
     }
@@ -72,12 +87,29 @@ class QuizController extends Controller
         if ($userId && $quiz->hasUserCompletedQuiz($userId)) {
             return response()->json(['message' => 'You have already completed this quiz.'], 403);
         }
-        $questions = Question::withCorrectAnswersCount($validated['answers'])
-                      ->whereIn('id', collect($validated['answers'])->pluck('questionId'))
-                      ->get();
-        $timeSpent = $validated['timeSpent'];
 
-        $totalScore = $questions->sum('correct_answers_count');
+        $userAnswers = collect($validated['answers']);
+
+        $totalScore = 0;
+        $correctQuestionsCount = 0;
+
+        foreach ($quiz->questions as $question) {
+            $correctAnswersIds = $question->answers()->where('is_correct', true)->pluck('id')->sort()->values();
+
+            $userAnswersIds = collect($validated['answers'])
+            ->where('questionId', $question->id)
+            ->flatMap(function ($answer) {
+                return $answer['selectedAnswerIds'];
+            })->sort()->values();
+
+
+            if ($correctAnswersIds->diff($userAnswersIds)->isEmpty() && $userAnswersIds->diff($correctAnswersIds)->isEmpty()) {
+                $totalScore += $question->points;
+                $correctQuestionsCount++;
+            }
+        }
+
+        $timeSpent = $validated['timeSpent'];
 
         DB::table('quiz_user')->insert([
             'quiz_id' => $id,
@@ -85,13 +117,15 @@ class QuizController extends Controller
             'score' => $totalScore,
             'time_spent' => $timeSpent,
             'created_at' => now()
-
         ]);
 
         return response()->json([
             'message' => 'Quiz answers submitted successfully.',
             'score' => $totalScore,
+            'correctQuestionsCount' => $correctQuestionsCount,
+
         ]);
     }
+
 
 }

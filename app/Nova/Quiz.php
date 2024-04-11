@@ -57,18 +57,6 @@ class Quiz extends Resource
             BelongsToMany::make('Categories')->searchable(),
 
 
-            Number::make('Total Points')
-                ->sortable()
-                ->min(0)
-                ->step(1)
-                ->rules('required', 'integer', 'min:0'),
-
-            Number::make('Number Of Questions')
-                ->sortable()
-                ->min(0)
-                ->step(1)
-                ->rules('required', 'integer', 'min:0'),
-
             Number::make('Estimated Time', 'estimated_time')
                 ->sortable()
                 ->min(0)

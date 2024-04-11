@@ -10,12 +10,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class Quiz extends Model
 {
     use HasFactory;
     protected $guarded = [];
-    protected $appends = ['total_attempts'];
+    protected $appends = ['totalAttempts'];
+
 
 
 
@@ -94,7 +96,6 @@ class Quiz extends Model
 
     public function userAttempts()
     {
-
         return $this->belongsToMany(User::class, 'quiz_user')
         ->withPivot('score', 'time_spent', 'created_at')
         ->withTimestamps();
@@ -150,5 +151,21 @@ class Quiz extends Model
                 break;
         }
     }
+
+    public function getTotalPointsAttribute()
+    {
+        return $this->questions->sum('points');
+    }
+
+    public function getQuestionsCountAttribute()
+    {
+        return $this->questions()->count();
+    }
+
+    public function getTotalAttemptsAttribute()
+    {
+        return DB::table('quiz_user')->where('quiz_id', $this->id)->count();
+    }
+
 
 }
