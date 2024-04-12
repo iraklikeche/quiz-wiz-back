@@ -81,7 +81,8 @@ class QuizController extends Controller
 
     public function submitAnswers(QuizSubmissionRequest $request, $id)
     {
-        $quiz = Quiz::findOrFail($id);
+        $quiz = Quiz::with('questions.answers')->findOrFail($id);
+
         $validated = $request->validated();
         $userId = auth()->id();
         if ($userId && $quiz->hasUserCompletedQuiz($userId)) {
@@ -94,9 +95,10 @@ class QuizController extends Controller
         $correctQuestionsCount = 0;
 
         foreach ($quiz->questions as $question) {
-            $correctAnswersIds = $question->answers()->where('is_correct', true)->pluck('id')->sort()->values();
 
-            $userAnswersIds = collect($validated['answers'])
+            $correctAnswersIds = $question->answers->where('is_correct', true)->pluck('id')->sort()->values();
+
+            $userAnswersIds = $userAnswers
             ->where('questionId', $question->id)
             ->flatMap(function ($answer) {
                 return $answer['selectedAnswerIds'];
