@@ -22,7 +22,7 @@ class QuizSubmissionRequest extends FormRequest
             'timeSpent' => 'required|integer|min:0',
             'answers' => 'required|array',
             'answers.*.questionId' => 'required|exists:questions,id',
-            'answers.*.selectedAnswerIds' => 'required|array',
+            'answers.*.selectedAnswerIds' => 'sometimes|array',
             'answers.*.selectedAnswerIds.*' => 'exists:answers,id'
         ];
     }

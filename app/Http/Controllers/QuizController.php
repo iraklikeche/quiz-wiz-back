@@ -27,7 +27,8 @@ class QuizController extends Controller
         ->sortBy($request->input('sort'));
 
         $quizzes = $query->paginate(3);
-        return response()->json([
+        return response()->json(
+            [
             'data' => QuizResource::collection($quizzes),
             'links' => [
                 'first' => $quizzes->url(1),
@@ -44,7 +45,8 @@ class QuizController extends Controller
                 'to' => $quizzes->lastItem(),
                 'total' => $quizzes->total(),
             ],
-        ]);
+            ]
+        );
     }
     public function show($id)
     {
@@ -81,8 +83,6 @@ class QuizController extends Controller
 
     public function submitAnswers(QuizSubmissionRequest $request, $id)
     {
-
-
         $quiz = Quiz::with(['questions.answers' => function ($query) {
             $query->where('is_correct', true)->orderBy('id');
         }])->findOrFail($id);
@@ -105,7 +105,7 @@ class QuizController extends Controller
             $userAnswersIds = $userAnswers
             ->where('questionId', $question->id)
             ->flatMap(function ($answer) {
-                return $answer['selectedAnswerIds'];
+                return $answer['selectedAnswerIds'] ?? [];
             })->sort()->values();
 
 
@@ -113,7 +113,6 @@ class QuizController extends Controller
                 $totalScore += $question->points;
                 $correctQuestionsCount++;
             }
-
         }
 
         $timeSpent = $validated['timeSpent'];
