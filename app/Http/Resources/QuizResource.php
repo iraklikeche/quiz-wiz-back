@@ -16,7 +16,6 @@ class QuizResource extends JsonResource
     public function toArray(Request $request): array
     {
 
-        $imageUrl = $this->image ? Storage::disk('public')->url($this->image) : null;
         $userId = auth()->id();
         $userAttempt = $this->userAttempts->firstWhere('id', $userId);
 
@@ -34,7 +33,7 @@ class QuizResource extends JsonResource
             'instruction' => $this->instruction,
             'entryQuestion' => $this->entry_question,
             'hasUserCompletedQuiz' => $userId ? $this->hasUserCompletedQuiz($userId) : false,
-            'totalAttempts' => $this->userAttempts()->count(),
+            'totalAttempts' => $this->totalAttempts,
             'userScore' => $userAttempt ? $userAttempt->pivot->score : null,
             'timeSpent' => $userAttempt ? $userAttempt->pivot->time_spent : null,
             'completedAt' => $userAttempt ? optional($userAttempt->pivot->created_at)->toDateTimeString() : null,

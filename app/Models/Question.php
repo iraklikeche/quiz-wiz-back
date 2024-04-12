@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Question extends Model
 {
     use HasFactory;
+    protected $guarded = [];
+
     public function quiz(): BelongsTo
     {
         return $this->belongsTo(Quiz::class);
