@@ -28,7 +28,6 @@ class QuizController extends Controller
 
         $quizzes = $query->paginate(3);
         return response()->json(
-            // QuizResource::collection($quizzes)
             [
             'data' => QuizResource::collection($quizzes),
             'links' => [
