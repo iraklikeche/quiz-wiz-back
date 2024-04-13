@@ -32,11 +32,6 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->avatar ? asset('storage/' . $this->avatar) : null;
 
     }
-
-
-
-
-
     /**
      * The attributes that are mass assignable.
      *

@@ -12,12 +12,13 @@ class CustomVerifyEmail extends Notification
 {
     use Queueable;
 
+
     /**
      * Create a new notification instance.
      */
     public function __construct()
     {
-        //
+
     }
 
     /**
@@ -37,12 +38,9 @@ class CustomVerifyEmail extends Notification
     {
         $verificationUrl = $this->verificationUrl($notifiable);
 
-        return (new MailMessage())
-                    ->subject('Please verify your email')
-                    ->greeting('Hello')
-                    ->line('You’re almost there! To complete your sign up, please verify your email address.')
-                    ->action('Verify now', $verificationUrl)
-                    ->line('If you did not create an account, no further action is required.');
+        return (new MailMessage())->view('email', ['url' => $verificationUrl, 'user' => $notifiable->username, 'headerText' => 'Verify your email address to get started', 'text' => "You're almost there! To complete your sign up, please verify your email address.", 'buttonText' => 'Verify now'])->from('no-reply@quizwiz.com')
+        ->subject('Please verify your email');
+
     }
 
     protected function verificationUrl($notifiable)

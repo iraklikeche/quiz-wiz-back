@@ -15,7 +15,6 @@ class QuizResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-
         $userId = auth()->id();
         $userAttempt = $this->userAttempts->firstWhere('id', $userId);
 

@@ -143,6 +143,12 @@ class Quiz extends Model
             case 'reverse-alphabet':
                 $query->orderByDesc('title');
                 break;
+            case 'popular':
+                $query->select('quizzes.*', DB::raw('COUNT(quiz_user.quiz_id) as attempts_count'))
+                      ->leftJoin('quiz_user', 'quizzes.id', '=', 'quiz_user.quiz_id')
+                      ->groupBy('quizzes.id')
+                      ->orderByDesc('attempts_count');
+                break;
             case 'newest':
                 $query->orderByDesc('created_at');
                 break;
