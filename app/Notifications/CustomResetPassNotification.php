@@ -43,11 +43,10 @@ class CustomResetPassNotification extends Notification
 
         $url = $this->resetUrl($this->token, $this->email);
 
-        return (new MailMessage())
-                    ->subject('Reset Password Notification')
-                    ->line('You are receiving this email because we received a password reset request for your account.')
-                    ->action('Reset Password', $url)
-                    ->line('If you did not request a password reset, no further action is required.');
+        return (new MailMessage())->view('email', ['url' => $url, 'user' => $notifiable->username,
+                 'headerText' => 'Reset Your Password',
+                 'text' => "We received a request to reset your password for your account. If you did not make this     request, please ignore this email. Otherwise, you can reset your password using the button below.",
+                'buttonText' => 'Reset Password'])->subject('Please verify your email')->from('no-reply@quizwiz.com');
     }
 
 
