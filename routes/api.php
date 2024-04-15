@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Auth\VerificationController;
+use App\Http\Controllers\CompanyDetails;
+use App\Http\Controllers\CompanyDetailsController;
 use App\Http\Controllers\QuizController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\UserController;
@@ -43,3 +45,6 @@ Route::controller(QuizController::class)->group(function () {
     Route::post('/quizzes/{id}/submit', 'submitAnswers');
 
 });
+
+
+Route::get('/company-details', [CompanyDetailsController::class, 'show']);
