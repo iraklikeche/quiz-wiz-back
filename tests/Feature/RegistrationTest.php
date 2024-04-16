@@ -2,7 +2,12 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
+use App\Notifications\CustomVerifyEmail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
 use Tests\TestCase;
 
 class RegistrationTest extends TestCase
@@ -10,7 +15,7 @@ class RegistrationTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    public function user_can_register_successfully()
+    public function test_user_can_register_successfully()
     {
         $response = $this->json('POST', 'api/register', [
             'username' => 'TestUser',
@@ -76,5 +81,67 @@ class RegistrationTest extends TestCase
         $response->assertJsonValidationErrors(['email']);
     }
 
+    public function test_user_can_register_successfully_and_receive_confirmation_email()
+    {
+        Mail::fake();
+        Notification::fake();
+
+
+        $response = $this->json('POST', 'api/register', [
+            'username' => 'TestUser',
+            'email' => 'test@example.com',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+            'agreed_to_terms' => true,
+        ]);
+
+        $response->assertStatus(200)
+                 ->assertJson(['message' => 'User successfully registered.']);
+
+        $this->assertDatabaseHas('users', ['username' => 'TestUser']);
+        $user = User::where('email', 'test@example.com')->first();
+
+        Notification::assertSentTo([$user], CustomVerifyEmail::class);
+
+
+    }
+
+    public function test_user_can_confirm_email_successfully()
+    {
+
+
+        Mail::fake();
+        Notification::fake();
+
+        // Trigger registration
+        $this->json('POST', 'api/register', [
+            'username' => 'TestUser',
+            'email' => 'test@example.com',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+            'agreed_to_terms' => true,
+        ]);
+
+        // Assume the user is registered and fetch the user
+        $user = User::where('email', 'test@example.com')->firstOrFail();
+
+        // Retrieve the notification sent to the user to get the verification URL
+        $notification = Notification::sent($user, CustomVerifyEmail::class)->first();
+        $verificationUrl = $notification->toMail($user)->viewData['url'];
+
+        // Extract the backend verification URL from the query parameters of $verificationUrl
+        parse_str(parse_url($verificationUrl, PHP_URL_QUERY), $queryArray);
+        $backendVerificationUrl = $queryArray['verify_url'];
+
+        // Decode the URL since it's encoded in the output you provided
+        $decodedBackendVerificationUrl = urldecode($backendVerificationUrl);
+
+        // Use the decoded URL for the GET request in your test
+        $response = $this->get($decodedBackendVerificationUrl);
+
+        // Assertions to ensure email is confirmed
+        $response->assertStatus(200);
+        $this->assertTrue($user->fresh()->hasVerifiedEmail());
+    }
 
 }
