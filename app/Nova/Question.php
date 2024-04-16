@@ -47,7 +47,6 @@ class Question extends Resource
         return [
             ID::make()->sortable(),
 
-
             Text::make('Text')
                 ->sortable()
                 ->rules('required'),
