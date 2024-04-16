@@ -14,7 +14,7 @@ class CategoryQuizSeeder extends Seeder
     public function run(): void
     {
         $quizzes = Quiz::all();
-        $categories = Category::factory(5)->create();
+        $categories = Category::factory(10)->create();
 
         $quizzes->each(function ($quiz) use ($categories) {
             $quiz->categories()->attach($categories->random(rand(1, $categories->count()))->pluck('id')->toArray());

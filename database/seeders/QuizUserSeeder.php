@@ -14,7 +14,7 @@ class QuizUserSeeder extends Seeder
      */
     public function run(): void
     {
-        $quizzes = Quiz::factory(5)->create();
+        $quizzes = Quiz::factory(20)->create();
 
         $user = User::factory()->create([
             'username'     => 'Test',

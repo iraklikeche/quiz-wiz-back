@@ -15,8 +15,8 @@ class AnswerQuestionSeeder extends Seeder
     public function run(): void
     {
         foreach (Quiz::all() as $quiz) {
-            Question::factory(rand(1, 3))->create()->each(function ($question) {
-                Answer::factory(rand(1, 3))->create([
+            Question::factory(rand(1, 0))->create()->each(function ($question) {
+                Answer::factory(rand(1, 5))->create([
                    'question_id' => $question->id,
                 ]);
 
