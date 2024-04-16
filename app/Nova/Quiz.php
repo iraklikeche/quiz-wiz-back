@@ -2,7 +2,6 @@
 
 namespace App\Nova;
 
-use Laravel\Nova\Fields\Text as FieldsText;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
@@ -10,7 +9,6 @@ use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\HasMany;
-use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Image;
 use Laravel\Nova\Fields\Textarea;
 
@@ -28,7 +26,7 @@ class Quiz extends Resource
      *
      * @var string
      */
-    public static $title = 'id';
+    public static $title = 'name';
 
     /**
      * The columns that should be searched.
@@ -56,7 +54,6 @@ class Quiz extends Resource
 
             BelongsToMany::make('Categories')->searchable(),
 
-
             Number::make('Estimated Time', 'estimated_time')
                 ->sortable()
                 ->min(0)
@@ -66,7 +63,6 @@ class Quiz extends Resource
             HasMany::make('Questions'),
 
             Image::make('Image')
-                ->path('quizzes')
                 ->rules('required', 'image'),
 
             BelongsTo::make('Difficulty Level', 'difficultyLevel', DifficultyLevel::class)->sortable(),
@@ -78,6 +74,7 @@ class Quiz extends Resource
                 ->sortable()
                 ->hideFromIndex(),
 
+            BelongsToMany::make('Users')
             ];
 
     }
