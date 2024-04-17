@@ -12,6 +12,8 @@ class QuizUserSeeder extends Seeder
     /**
      * Run the database seeds.
      */
+
+
     public function run(): void
     {
         $quizzes = Quiz::factory(20)->create();
