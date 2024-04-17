@@ -79,6 +79,17 @@ php artisan config:cache
 
 in order to cache environment variables.
 
+## API endpoints
+
+<ul>
+<li>User authorization (login, registration, password reset).
+</li>
+<li>Filtering quizzes by categories, difficulty levels, etc.
+</li>
+<li>Retrieving and submitting quiz attempts for logged-in users.
+</li>
+</ul>
+
 ## Migrations
 
 if you've completed getting started section, then migrating database if fairly simple process, just execute:
