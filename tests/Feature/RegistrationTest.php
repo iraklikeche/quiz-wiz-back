@@ -165,7 +165,7 @@ class RegistrationTest extends TestCase
         $response->assertJsonValidationErrors(['username', 'email']);
     }
 
-    public function registration_fails_if_username_is_less_than_3_characters()
+    public function test_registration_fails_if_username_is_less_than_3_characters()
     {
         $response = $this->json('POST', 'api/register', [
             'username' => 'ab',
