@@ -9,16 +9,12 @@ use App\Models\User;
 use Database\Seeders\CategoryQuizSeeder;
 use Database\Seeders\DifficultyLevelSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class FilterTest extends TestCase
 {
     use RefreshDatabase;
-    /**
-     * A basic feature test example.
-     */
 
 
     protected function setUp(): void
@@ -27,13 +23,11 @@ class FilterTest extends TestCase
         $this->seed(DifficultyLevelSeeder::class);
         $this->seed(CategoryQuizSeeder::class);
     }
-    /** @test */
     public function test_retrieves_quizzes_without_filters()
     {
         Quiz::factory()->count(5)->create();
 
-
-        $response = $this->getJson('/api/quizzes');
+        $response = $this->getJson(route('quizzes.index'));
 
         $response->assertOk();
         $response->assertStatus(200);
@@ -52,9 +46,7 @@ class FilterTest extends TestCase
             $quiz->categories()->attach($otherCategory->id);
         });
 
-        $response = $this->getJson("/api/quizzes?categories={$category->id}");
-
-        dd($response->json());
+        $response = $this->getJson(route('quizzes.index', ['categories' => $category->id]));
 
         $response->assertOk();
         $response->assertStatus(200);
@@ -67,7 +59,7 @@ class FilterTest extends TestCase
 
         Quiz::factory()->count(2)->create(['difficulty_level_id' => $difficulty->id]);
 
-        $response = $this->getJson("/api/quizzes?difficulties={$difficulty->id}");
+        $response = $this->getJson(route('quizzes.index', ['difficulties' => $difficulty->id]));
 
         $response->assertOk();
         $response->assertJsonCount(2, 'data');
@@ -79,7 +71,8 @@ class FilterTest extends TestCase
         Quiz::factory()->create(['title' => 'A Quiz']);
         Quiz::factory()->create(['title' => 'B Quiz']);
 
-        $response = $this->getJson("/api/quizzes?sort=alphabet");
+
+        $response = $this->getJson(route('quizzes.index', ['sort' => 'alphabet']));
 
 
         $response->assertOk();
@@ -93,7 +86,8 @@ class FilterTest extends TestCase
         Quiz::factory()->create(['title' => 'A Quiz']);
         Quiz::factory()->create(['title' => 'B Quiz']);
 
-        $response = $this->getJson("/api/quizzes?sort=reverse-alphabet");
+        $response = $this->getJson(route('quizzes.index', ['sort' => 'reverse-alphabet']));
+
 
 
         $response->assertOk();
@@ -108,7 +102,8 @@ class FilterTest extends TestCase
         $quiz2 = Quiz::factory()->create(['created_at' => now()->subDays(1)]);
         $quiz3 = Quiz::factory()->create(['created_at' => now()]);
 
-        $response = $this->getJson("/api/quizzes?sort=newest");
+        $response = $this->getJson(route('quizzes.index', ['sort' => 'newest']));
+
 
         $response->assertOk();
 
@@ -124,7 +119,8 @@ class FilterTest extends TestCase
         $quiz2 = Quiz::factory()->create(['created_at' => now()->subDays(1)]);
         $quiz3 = Quiz::factory()->create(['created_at' => now()]);
 
-        $response = $this->getJson("/api/quizzes?sort=oldest");
+        $response = $this->getJson(route('quizzes.index', ['sort' => 'oldest']));
+
 
         $response->assertOk();
 
@@ -162,9 +158,7 @@ class FilterTest extends TestCase
         });
 
 
-        $response = $this->getJson("/api/quizzes?sort=popular");
-        dd($response->json());
-
+        $response = $this->getJson(route('quizzes.index', ['sort' => 'popular']));
 
         $response->assertOk();
 
@@ -190,8 +184,8 @@ class FilterTest extends TestCase
 
         $this->actingAs($user);
 
-        $response = $this->getJson("/api/quizzes?my_quizzes=true");
-        dd($response->json());
+        $response = $this->getJson(route('quizzes.index', ['my_quizzes' => 'true']));
+
 
         $response->assertOk();
         $response->assertJsonCount(2, 'data');
@@ -215,8 +209,8 @@ class FilterTest extends TestCase
 
         $this->actingAs($user);
 
-        $response = $this->getJson("/api/quizzes?not_completed=true");
-        dd($response->json());
+        $response = $this->getJson(route('quizzes.index', ['not_completed' => 'true']));
+
 
         $response->assertOk();
         $response->assertJsonCount(3, 'data');

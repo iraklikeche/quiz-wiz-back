@@ -34,17 +34,15 @@ Route::prefix('/email')->controller(VerificationController::class)->group(functi
          ->name('verification.resend');
 });
 
-
-
 Route::controller(QuizController::class)->group(function () {
-    Route::get('/quizzes', 'index');
-    Route::get('/quizzes/similar', 'similarQuizzesByCategories');
-    Route::get('/quizzes/{id}', 'show');
-    Route::get('/categories', 'getAllCategories');
-    Route::get('/difficulty-levels', 'getAllDifficultyLevels');
-    Route::post('/quizzes/{id}/submit', 'submitAnswers');
-
+    Route::get('/quizzes', 'index')->name('quizzes.index');
+    Route::get('/quizzes/similar', 'similarQuizzesByCategories')->name('quizzes.similar');
+    Route::get('/quizzes/{id}', 'show')->name('quizzes.show');
+    Route::get('/categories', 'getAllCategories')->name('categories.index');
+    Route::get('/difficulty-levels', 'getAllDifficultyLevels')->name('difficulty.index');
+    Route::post('/quizzes/{id}/submit', 'submitAnswers')->name('quizzes.submit');
 });
+
 
 
 Route::get('/company-details', [CompanyDetailsController::class, 'show']);
