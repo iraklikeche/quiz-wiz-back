@@ -25,7 +25,6 @@ class QuizFactory extends Factory
             'entry_question' => fake()->sentence,
             'difficulty_level_id' => $level_id,
             'image' => fake()->image(dir: 'public/storage', fullPath: false),
-
         ];
     }
 }
