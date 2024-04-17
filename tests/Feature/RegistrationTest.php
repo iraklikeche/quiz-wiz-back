@@ -122,26 +122,63 @@ class RegistrationTest extends TestCase
             'agreed_to_terms' => true,
         ]);
 
-        // Assume the user is registered and fetch the user
         $user = User::where('email', 'test@example.com')->firstOrFail();
 
-        // Retrieve the notification sent to the user to get the verification URL
         $notification = Notification::sent($user, CustomVerifyEmail::class)->first();
         $verificationUrl = $notification->toMail($user)->viewData['url'];
 
-        // Extract the backend verification URL from the query parameters of $verificationUrl
         parse_str(parse_url($verificationUrl, PHP_URL_QUERY), $queryArray);
         $backendVerificationUrl = $queryArray['verify_url'];
 
-        // Decode the URL since it's encoded in the output you provided
         $decodedBackendVerificationUrl = urldecode($backendVerificationUrl);
 
-        // Use the decoded URL for the GET request in your test
         $response = $this->get($decodedBackendVerificationUrl);
 
-        // Assertions to ensure email is confirmed
         $response->assertStatus(200);
         $this->assertTrue($user->fresh()->hasVerifiedEmail());
     }
+    public function test_authenticated_user_cannot_access_registration_form()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $response = $this->post('api/register');
+        $response->assertStatus(403);
+    }
+
+    public function test_registration_fails_if_username_or_email_already_taken()
+    {
+        $existingUser = User::factory()->create([
+            'username' => 'ExistingUser',
+            'email' => 'existing@example.com',
+        ]);
+
+        $response = $this->json('POST', 'api/register', [
+            'username' => 'ExistingUser',
+            'email' => 'existing@example.com',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+            'agreed_to_terms' => true,
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['username', 'email']);
+    }
+
+    public function registration_fails_if_username_is_less_than_3_characters()
+    {
+        $response = $this->json('POST', 'api/register', [
+            'username' => 'ab',
+            'email' => 'user@example.com',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+            'agreed_to_terms' => true,
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['username']);
+    }
+
+
 
 }
