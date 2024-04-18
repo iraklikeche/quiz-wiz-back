@@ -54,5 +54,32 @@ class SimilarQuizTest extends TestCase
         $response->assertJsonCount(3, 'data');
     }
 
+    public function test_excludes_a_specific_quiz_when_fetching_similar_quizzes()
+    {
+        $user = User::factory()->create();
+        $category = Category::factory()->create();
+
+        $quizzes = Quiz::factory()->count(4)->create()->each(function ($quiz) use ($category) {
+            $quiz->categories()->attach($category->id);
+        });
+
+        $excludeQuiz = $quizzes->first();
+
+        $this->actingAs($user);
+
+        $response = $this->getJson(route('quizzes.similar', ['categoryIds' => $category->id, 'excludeQuizId' => $excludeQuiz->id]));
+
+        $response->assertOk();
+
+        $responseQuizIds = array_column($response->json('data'), 'id');
+
+        $this->assertNotContains($excludeQuiz->id, $responseQuizIds);
+
+        $this->assertContains($quizzes[1]->id, $responseQuizIds);
+        $this->assertContains($quizzes[2]->id, $responseQuizIds);
+        $this->assertContains($quizzes[3]->id, $responseQuizIds);
+    }
+
+
 
 }
