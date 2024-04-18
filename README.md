@@ -17,22 +17,21 @@ The back-end of Quiz Wiz serves as the core logic handler, interfacing with the 
 # Technologies Used
 
 ```
-<ul>
-<li>Laravel: A PHP framework for web and API development, chosen for its elegance and simplicity.</li>
-<li>MySQL: Used for data storage, providing a reliable and scalable database solution.
-</li>
-</ul>
+
+- Laravel: A PHP framework for web and API development, chosen for its elegance and simplicity.
+-MySQL: Used for data storage, providing a reliable and scalable database solution.
+
 ```
 
 # Prerequisites
 
 ```
-<ul>
-<li>PHP version 8.0 or higher.</li>
-<li>MySQL version 8.0 or higher.</li>
-<li>Composer for managing PHP dependencies.</li>
-<li>Laravel 11.</li>
-</ul>
+
+- PHP version 8.0 or higher.
+- MySQL version 8.0 or higher.
+- Composer for managing PHP dependencies.
+- Laravel 11.
+
 ```
 
 ## Getting Started
@@ -81,14 +80,11 @@ in order to cache environment variables.
 
 ## API endpoints
 
-<ul>
-<li>User authorization (login, registration, password reset).
-</li>
-<li>Filtering quizzes by categories, difficulty levels, etc.
-</li>
-<li>Retrieving and submitting quiz attempts for logged-in users.
-</li>
-</ul>
+-   User authorization (login, registration, password reset).
+
+-   Filtering quizzes by categories, difficulty levels, etc.
+
+-   Retrieving and submitting quiz attempts for logged-in users.
 
 ## Migrations
 
