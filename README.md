@@ -18,8 +18,10 @@ The back-end of Quiz Wiz serves as the core logic handler, interfacing with the 
 
 ```
 
-- Laravel: A PHP framework for web and API development, chosen for its elegance and simplicity.
--MySQL: Used for data storage, providing a reliable and scalable database solution.
+- Laravel
+- MySQL
+- Laraven Sanctum
+- Laravel Nova
 
 ```
 
@@ -36,7 +38,7 @@ The back-end of Quiz Wiz serves as the core logic handler, interfacing with the 
 
 ## Getting Started
 
-1. First of all you need to clone Task Manager repository from github:
+1. First of all you need to clone Quiz-wiz repository from github:
 
 ```
  git clone git@github.com:RedberryInternship/api-quizwiz-irakli-ketchekmadze.git
@@ -114,7 +116,6 @@ php artisan serve
 ├─── bootstrap
 ├─── config
 ├─── database
-├─── lang
 ├─── public
 ├─── resources
 ├─── routes
