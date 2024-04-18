@@ -215,4 +215,22 @@ class FilterTest extends TestCase
         $response->assertOk();
         $response->assertJsonCount(3, 'data');
     }
+
+    public function test_quizzes_can_be_searched_by_title()
+    {
+        $matchingQuiz1 = Quiz::factory()->create(['title' => 'Learn Laravel Basics']);
+        $matchingQuiz2 = Quiz::factory()->create(['title' => 'Advanced Laravel Tips']);
+        $nonMatchingQuiz = Quiz::factory()->create(['title' => 'VueJS for Beginners']);
+
+        $response = $this->getJson(route('quizzes.index', ['search' => 'Laravel']));
+
+        $response->assertOk();
+        $response->assertJsonCount(2, 'data');
+
+        $quizIds = array_column($response->json('data'), 'id');
+
+        $this->assertContains($matchingQuiz1->id, $quizIds);
+        $this->assertContains($matchingQuiz2->id, $quizIds);
+        $this->assertNotContains($nonMatchingQuiz->id, $quizIds);
+    }
 }
