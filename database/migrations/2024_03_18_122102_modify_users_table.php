@@ -12,7 +12,7 @@ return new class () extends Migration {
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('name');
-            $table->string('username')->unique();
+            $table->string('username')->unique()->nullable();
             $table->boolean('agreed_to_terms')->default(false);
         });
     }
