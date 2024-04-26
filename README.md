@@ -56,6 +56,18 @@ The back-end of Quiz Wiz serves as the core logic handler, interfacing with the 
  cp .env.example .env
 ```
 
+4. Generate your application key:
+
+```
+php artisan key:generate
+```
+
+5. Create a symbolic link for the storage directory:
+
+```
+php artisan storage:link
+```
+
 And now you should provide .env file all the necessary environment variables:
 
 MYSQL:
@@ -139,7 +151,7 @@ For more information about project standards, take a look at these docs:
 
 <a href="https://drawsql.app/teams/irakli/diagrams/quiz-wiz">Link to DrawSQL</a>
 
-<img src="public/images/drawsql.png" alt="drawSQL" />
+<img src="{{ env('DB_STRUCTURE_IMAGE_PATH') }}" alt="drawSQL" />
 
 ## License
 

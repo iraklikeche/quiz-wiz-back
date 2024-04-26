@@ -1,0 +1,11 @@
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #eaecf0;
+}
+
+a {
+    background-color: #4b69fd;
+    padding: 4px 12px;
+}
