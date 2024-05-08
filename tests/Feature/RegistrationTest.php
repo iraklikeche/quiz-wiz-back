@@ -108,8 +108,6 @@ class RegistrationTest extends TestCase
 
     public function test_user_can_confirm_email_successfully()
     {
-
-
         Mail::fake();
         Notification::fake();
 
