@@ -52,8 +52,6 @@ class Quiz extends Model
     }
 
 
-
-
     public function scopeSimilarToCategories($query, $categoryIds, $excludeQuizId = null)
     {
 

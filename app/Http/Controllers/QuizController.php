@@ -19,12 +19,13 @@ class QuizController extends Controller
         $userId = auth()->id();
         $isMyQuizzes = auth()->check() && $request->input('my_quizzes') === 'true';
         $isNotCompleted = auth()->check() && $request->input('not_completed') === 'true';
+        $sort = $request->input('sort') ?? 'newest';
         $query = Quiz::with(['difficultyLevel', 'categories', 'questions.answers', 'userAttempts'])
         ->search($request->input('search'))
         ->filterByCategories($request->input('categories'))
         ->filterByDifficulties($request->input('difficulties'))
         ->applyUserFilters($userId, $isMyQuizzes, $isNotCompleted)
-        ->sortBy($request->input('sort'));
+        ->sortBy($sort);
 
         $quizzes = $query->paginate(3);
         return response()->json(

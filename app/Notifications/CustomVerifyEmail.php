@@ -38,7 +38,7 @@ class CustomVerifyEmail extends Notification
     {
         $verificationUrl = $this->verificationUrl($notifiable);
 
-        return (new MailMessage())->view('email', ['url' => $verificationUrl, 'user' => $notifiable->username, 'headerText' => 'Verify your email address to get started', 'text' => "You're almost there! To complete your sign up, please verify your email address.", 'buttonText' => 'Verify now'])->from('no-reply@quizwiz.com')
+        return (new MailMessage())->view('email', ['url' => $verificationUrl, 'user' => $notifiable->username, 'headerText' => 'Verify your email', 'subHeader' => 'address to get started', 'text' => "You're almost there! To complete your sign up, please verify your email address.", 'buttonText' => 'Verify now'])->from('no-reply@quizwiz.com')
         ->subject('Please verify your email');
 
     }

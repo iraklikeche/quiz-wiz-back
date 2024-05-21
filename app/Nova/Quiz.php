@@ -26,15 +26,15 @@ class Quiz extends Resource
      *
      * @var string
      */
-    public static $title = 'name';
-
+    // public static $title = 'name';
+    public static $title = 'title'; 
     /**
      * The columns that should be searched.
      *
      * @var array
      */
     public static $search = [
-        'id',
+        'id', 'title',
     ];
 
     /**
@@ -75,9 +75,7 @@ class Quiz extends Resource
                 ->hideFromIndex(),
 
             BelongsToMany::make('Users')
-            ];
-
+           ];
     }
-
 
 }
